@@ -53,6 +53,6 @@ local function onEquipped( wep, ply )
 end
 
 -- Hooks --
-hook.Remove("WeaponEquip", "HandleEquipMS")
-hook.Add("WeaponEquip", "HandleEquipMS", onEquipped)
+hook.Remove(generateCFCHook("WeaponEquip"), "HandleEquipMS")
+hook.Add(generateCFCHook("WeaponEquip"), "HandleEquipMS", onEquipped)
 
