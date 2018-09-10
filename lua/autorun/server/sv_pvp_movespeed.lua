@@ -3,22 +3,22 @@ include( "autorun/shared/sh_pvp_movespeed.lua" )
 AddCSLuaFile( "autorun/shared/sh_pvp_movespeed.lua" )
 
 --List of weapons that will not be affected of the players movement speed
-local noneffectedWeapons = {}
-noneffectedWeapons.weapon_physgun    = true
-noneffectedWeapons.weapon_physcannon = true
-noneffectedWeapons.none              = true
-noneffectedWeapons.laserpointer      = true
-noneffectedWeapons.remotecontroller  = true
-noneffectedWeapons.gmod_tool         = true
-noneffectedWeapons.gmod_camera       = true
-noneffectedWeapons.weapon_357      	 = true
-noneffectedWeapons.weapon_ar2      	 = true
-noneffectedWeapons.weapon_crossbow 	 = true
-noneffectedWeapons.weapon_crowbar  	 = true
-noneffectedWeapons.weapon_pistol   	 = true
-noneffectedWeapons.weapon_shotgun  	 = true
-noneffectedWeapons.weapon_smg1     	 = true
-noneffectedWeapons.weapon_medkit   	 = true
+local nonEffectedWeapons = {}
+nonEffectedWeapons.weapon_physgun    = true
+nonEffectedWeapons.weapon_physcannon = true
+nonEffectedWeapons.none              = true
+nonEffectedWeapons.laserpointer      = true
+nonEffectedWeapons.remotecontroller  = true
+nonEffectedWeapons.gmod_tool         = true
+nonEffectedWeapons.gmod_camera       = true
+nonEffectedWeapons.weapon_357      	 = true
+nonEffectedWeapons.weapon_ar2      	 = true
+nonEffectedWeapons.weapon_crossbow 	 = true
+nonEffectedWeapons.weapon_crowbar  	 = true
+nonEffectedWeapons.weapon_pistol   	 = true
+nonEffectedWeapons.weapon_shotgun  	 = true
+nonEffectedWeapons.weapon_smg1     	 = true
+nonEffectedWeapons.weapon_medkit   	 = true
 
 -- Helper Functions --
 local function getPlayerPvpMode( ply )
