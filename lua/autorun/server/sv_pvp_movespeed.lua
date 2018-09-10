@@ -32,6 +32,7 @@ end
 -- Hook Functions --
 local function onEquipped( wep, ply )
 	if not playerIsInBuild( ply ) then return end
+    -- Stuff xd
 end
 
 -- Hooks --
