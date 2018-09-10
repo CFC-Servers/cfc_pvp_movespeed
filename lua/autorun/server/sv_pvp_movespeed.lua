@@ -37,10 +37,10 @@ local function adjustMovementSpeed(ply)
 	local weapons = ply:GetWeapons(ply)
 	local wepCount = 0
 	for k, weapon in pairs(weapons) do
-		if nonEffectedWeapons[weapon:GetClass()] == nil then
-            wepCount =  wepCount+1
+	    if nonEffectedWeapons[weapon:GetClass()] == nil then
+                wepCount =  wepCount+1
             
-        end
+            end
 	end
     multiplier = movementMultiplier(wepCount) 
     ply:SetRunSpeed(400*multiplier)
