@@ -44,7 +44,8 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
-local function movementMultiplier(weaponCount) 
+local function movementMultiplier(weaponCount)
+    if weaponCount < 1 then return 1 end
     return math.Clamp(1 - (1.9^( weaponCount))/100, 0, 1)
 end
 
@@ -75,12 +76,15 @@ local function adjustMovementSpeed(ply)
 end
 
 -- Hook Functions --
-local function onEquipped( wep, ply )
+local function onEquipOrDrop( wep, ply )
     if not IsValid( ply ) then return end
     adjustMovementSpeed( ply )
 end
 
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
-hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipped)
+hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipOrDrop)
+
+hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
+hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onEquipOrDrop)
 
