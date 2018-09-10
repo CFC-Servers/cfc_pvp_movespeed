@@ -36,7 +36,7 @@ end
 local function adjustMovementSpeed(ply) 
 
     local weapons = ply:GetWeapons(ply)
-    local wepCount = getWeapon
+    local wepCount = 0
     for k, weapon in pairs(weapons) do
         if nonEffectedWeapons[weapon:GetClass()] == nil then
             wepCount =  wepCount+1
