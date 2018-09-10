@@ -11,14 +11,14 @@ nonEffectedWeapons.laserpointer      = true
 nonEffectedWeapons.remotecontroller  = true
 nonEffectedWeapons.gmod_tool         = true
 nonEffectedWeapons.gmod_camera       = true
-nonEffectedWeapons.weapon_357      	 = true
-nonEffectedWeapons.weapon_ar2      	 = true
-nonEffectedWeapons.weapon_crossbow 	 = true
-nonEffectedWeapons.weapon_crowbar  	 = true
-nonEffectedWeapons.weapon_pistol   	 = true
-nonEffectedWeapons.weapon_shotgun  	 = true
-nonEffectedWeapons.weapon_smg1     	 = true
-nonEffectedWeapons.weapon_medkit   	 = true
+nonEffectedWeapons.weapon_357        = true
+nonEffectedWeapons.weapon_ar2        = true
+nonEffectedWeapons.weapon_crossbow   = true
+nonEffectedWeapons.weapon_crowbar    = true
+nonEffectedWeapons.weapon_pistol     = true
+nonEffectedWeapons.weapon_shotgun    = true
+nonEffectedWeapons.weapon_smg1       = true
+nonEffectedWeapons.weapon_medkit     = true
 
 -- Helper Functions --
 local function getPlayerPvpMode( ply )
@@ -32,7 +32,6 @@ end
 -- Hook Functions --
 local function onEquipped( wep, ply )
 	if not playerIsInBuild( ply ) then return end
-    -- Stuff xd
 end
 
 -- Hooks --
