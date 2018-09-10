@@ -55,7 +55,7 @@ local function setSpeed(ply, multiplier)
     ply:SetWalkSpeed(math.Clamp(baseWalkSpeed*multiplier,minWalkSpeed, baseWalkSpeed))
 end
 
-local function adjustMovementSpeed(ply) 
+local function adjustMovementSpeed(ply, wep) 
     if playerIsInBuild( ply ) then 
         setSpeed(ply, 1) 
         return
@@ -65,6 +65,9 @@ local function adjustMovementSpeed(ply)
     local wepCount = 0
     
     -- count weapons
+    if nonEffectedWeapons[wep:GetClass()] == nil then
+        wepCount =  wepCount+1
+    end
     for k, weapon in pairs(weapons) do
         if nonEffectedWeapons[weapon:GetClass()] == nil then
             wepCount =  wepCount+1
@@ -78,7 +81,7 @@ end
 -- Hook Functions --
 local function onEquipOrDrop( wep, ply )
     if not IsValid( ply ) then return end
-    adjustMovementSpeed( ply )
+    adjustMovementSpeed( ply, wep )
 end
 
 -- Hooks --
