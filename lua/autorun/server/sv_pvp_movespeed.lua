@@ -31,11 +31,12 @@ local function playerIsInBuild( ply )
 end
 
 local function movementMultiplier(weaponCount) 
-    -- calculate movement speed multiplier
+    return 1
 end
+
 local function adjustMovementSpeed(ply) 
 
-    local weapons = ply:GetWeapons(ply)
+    local weapons = ply:GetWeapons()
     local wepCount = 0
     for k, weapon in pairs(weapons) do
         if nonEffectedWeapons[weapon:GetClass()] == nil then
@@ -43,8 +44,8 @@ local function adjustMovementSpeed(ply)
         end
     end
     local multiplier = movementMultiplier(wepCount) 
-    ply:SetRunSpeed(baseWalkSpeed*multiplier)
-    ply:SetWalkSpeed(baseRunSpeed*multiplier) 
+    ply:SetRunSpeed(baseRunSpeed*multiplier)
+    ply:SetWalkSpeed(baseWalkSpeed*multiplier) 
 end
 -- Hook Functions --
 local function onEquipped( wep, ply )
