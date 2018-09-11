@@ -65,7 +65,7 @@ local function adjustMovementSpeed(ply, wep)
     local wepCount = 0
     
     -- count weapons
-    if nonEffectedWeapons[wep:GetClass()] == nil then
+    if wep and nonEffectedWeapons[wep:GetClass()] == nil then
         wepCount =  wepCount+1
     end
     for k, weapon in pairs(weapons) do
@@ -79,15 +79,20 @@ local function adjustMovementSpeed(ply, wep)
 end
 
 -- Hook Functions --
-local function onEquipOrDrop( wep, ply )
+local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
     adjustMovementSpeed( ply, wep )
 end
 
+local function onDrop( ply, wep )
+    if not IsValid( ply ) then return end
+    adjustMovementSpeed( ply, nil )
+end
+
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
-hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipOrDrop)
+hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquip)
 
 hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
-hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onEquipOrDrop)
+hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onDrop)
 
