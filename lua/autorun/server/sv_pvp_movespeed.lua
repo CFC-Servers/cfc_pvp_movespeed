@@ -44,19 +44,21 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
-local function movementMultiplier(weaponCount) 
-    return math.Clamp(1 - (1.9^( weaponCount))/100, 0, 1)
+local minMult = 0.2
+local function movementMultiplier( weaponCount )
+    local N = math.Round( 1 - (1.9^( weaponCount ))/100, 1 )
+    return math.Clamp( N, 0.5, 1 )
 end
 
 local function setSpeed(ply, multiplier) 
     -- set speed multiplier, 0 - 1
-    ply:SetRunSpeed(math.Clamp(baseRunSpeed*multiplier,minRunSpeed, baseRunSpeed))
-    ply:SetWalkSpeed(math.Clamp(baseWalkSpeed*multiplier,minWalkSpeed, baseWalkSpeed))
+    ply:SetRunSpeed( math.Clamp( baseRunSpeed*multiplier, minRunSpeed, baseRunSpeed ) )
+    ply:SetWalkSpeed( math.Clamp( baseWalkSpeed*multiplier,minWalkSpeed, baseWalkSpeed ) )
 end
 
-local function adjustMovementSpeed(ply) 
+function adjustMovementSpeed(ply) 
     if playerIsInBuild( ply ) then 
-        setSpeed(ply, 1) 
+        setSpeed( ply, 1 ) 
         return
     end
     
@@ -64,13 +66,13 @@ local function adjustMovementSpeed(ply)
     local wepCount = 0
     
     -- count weapons
-    for k, weapon in pairs(weapons) do
+    for _, weapon in pairs( weapons ) do
         if nonEffectedWeapons[weapon:GetClass()] == nil then
-            wepCount =  wepCount+1
+            wepCount = wepCount + 1
         end
     end
     
-    local multiplier = movementMultiplier(wepCount) 
+    local multiplier = movementMultiplier( wepCount ) 
     setSpeed(ply, multiplier)
 end
 
@@ -83,4 +85,3 @@ end
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
 hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipped)
-
