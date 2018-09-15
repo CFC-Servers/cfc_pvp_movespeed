@@ -51,12 +51,12 @@ end
 
 local function setSpeed(ply, multiplier) 
     -- set speed multiplier, 0 - 1
-    ply:SetRunSpeed(math.Clamp(baseRunSpeed*multiplier,minRunSpeed, baseRunSpeed))
-    ply:SetWalkSpeed(math.Clamp(baseWalkSpeed*multiplier,minWalkSpeed, baseWalkSpeed))
+    ply:SetRunSpeed( math.Clamp( baseRunSpeed*multiplier, minRunSpeed, baseRunSpeed ) )
+    ply:SetWalkSpeed( math.Clamp( baseWalkSpeed*multiplier, minWalkSpeed, baseWalkSpeed ) )
 end
 
-local function adjustMovementSpeed(ply, wep) 
-    if playerIsInBuild( ply ) then 
+local function adjustMovementSpeed( ply, wepNum ) 
+    if playerIsInBuild( ply ) then
         setSpeed(ply, 1) 
         return
     end
@@ -65,28 +65,34 @@ local function adjustMovementSpeed(ply, wep)
     local wepCount = 0
     
     -- count weapons
-    if wep and nonEffectedWeapons[wep:GetClass()] == nil then
-        wepCount =  wepCount+1
-    end
-    for k, weapon in pairs(weapons) do
+    for _, weapon in pairs( weapons ) do
         if nonEffectedWeapons[weapon:GetClass()] == nil then
-            wepCount =  wepCount+1
+            wepCount =  wepCount + 1
         end
     end
+    wepCount = math.Clamp(wepCount + wepNum, 0, wepCount + wepNum)
     
-    local multiplier = movementMultiplier(wepCount) 
+    local multiplier = movementMultiplier( wepCount ) 
     setSpeed(ply, multiplier)
 end
 
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
-    adjustMovementSpeed( ply, wep )
+    wepNum = 0
+    if wep and nonEffectedWeapons[wep:GetClass()] == nil then
+        wepNum = 1
+    end
+    adjustMovementSpeed( ply, wepNum )
 end
 
 local function onDrop( ply, wep )
     if not IsValid( ply ) then return end
-    adjustMovementSpeed( ply, nil )
+    wepNum = 0
+    if wep and nonEffectedWeapons[wep:GetClass()] == nil then
+        wepNum = -1
+    end
+    adjustMovementSpeed( ply, wepNum )
 end
 
 -- Hooks --
@@ -95,4 +101,3 @@ hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquip)
 
 hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
 hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onDrop)
-
