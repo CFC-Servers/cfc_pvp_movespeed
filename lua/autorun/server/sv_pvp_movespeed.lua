@@ -30,6 +30,19 @@ nonEffectedWeapons.weapon_medkit     = true
 nonEffectedWeapons.weapon_frag       = true
 nonEffectedWeapons.weapon_rpg        = true
 
+local undroppableWeapons = {}
+undroppableWeapons.weapon_physgun    = true
+undroppableWeapons.weapon_physcannon = true
+undroppableWeapons.none              = true
+undroppableWeapons.gmod_tool         = true
+undroppableWeapons.gmod_camera       = true
+
+local chatDropPhrases = {}
+chatDropPhrases["!drop"] = true
+chatDropPhrases["!d"]    = true
+chatDropPhrases["/drop"] = true
+chatDropPhrases["/d"]    = true
+
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
 local function generateCFCHook( hookname )
@@ -46,7 +59,7 @@ end
 
 local minMult = 0.2
 local function movementMultiplier( weaponCount )
-    local N = math.Round( 1 - (1.9^( weaponCount ))/100, 1 )
+    local N = 1 - (1.9^( weaponCount ))/100
     return math.Clamp( N, 0.5, 1 )
 end
 
@@ -76,12 +89,50 @@ function adjustMovementSpeed(ply)
     setSpeed(ply, multiplier)
 end
 
+local function dropWeapon( ply )
+    ply:StripWeapon( ply:GetActiveWeapon():GetClass() )
+end
+
+local function dropAndAdjust( ply, weapon )
+    local class = weapon:GetClass()
+    if undroppableWeapons[class] then 
+        ply:ChatPrint("You are unable to drop \"" .. class .. "\".")
+        return 
+    end
+
+    dropWeapon( ply )
+    adjustMovementSpeed( ply )
+end
+
 -- Hook Functions --
 local function onEquipped( wep, ply )
     if not IsValid( ply ) then return end
     adjustMovementSpeed( ply )
 end
 
+local function onChat( ply, msg )
+    msg = string.lower( msg )
+    if chatDropPhrases[msg] then
+        if not ply:Alive() then return "" end
+        local wep = ply:GetActiveWeapon()
+        if not IsValid( wep ) then return "" end 
+
+        dropAndAdjust( ply, wep )
+        return ""
+    end
+end
+
+-- Concommands --
+concommand.Add("dropweapon", function( ply, cmd, args )
+    local wep = ply:GetActiveWeapon()
+    if not IsValid( wep ) then return end
+
+    dropAndAdjust( ply, wep )
+end)
+
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
 hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipped)
+
+hook.Remove( "PlayerSay", generateCFCHook("ChatCommands") )
+hook.Add( "PlayerSay", generateCFCHook("ChatCommands"), onChat)
