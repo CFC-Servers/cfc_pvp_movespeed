@@ -70,7 +70,7 @@ local function adjustMovementSpeed( ply, wepNum )
             wepCount =  wepCount + 1
         end
     end
-    wepCount = math.Clamp(wepCount + wepNum, 0, wepCount + wepNum)
+    wepCount = math.max(wepCount + wepNum, 0)
     
     local multiplier = movementMultiplier( wepCount ) 
     setSpeed(ply, multiplier)
