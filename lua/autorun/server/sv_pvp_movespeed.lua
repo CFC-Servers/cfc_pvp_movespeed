@@ -51,8 +51,10 @@ end
 
 local function setSpeed(ply, multiplier) 
     -- set speed multiplier, 0 - 1
-    ply:SetRunSpeed( math.Clamp( baseRunSpeed*multiplier, minRunSpeed, baseRunSpeed ) )
-    ply:SetWalkSpeed( math.Clamp( baseWalkSpeed*multiplier, minWalkSpeed, baseWalkSpeed ) )
+    local runSpeed = baseRunSpeed * multiplier
+    local walkSpeed = baseWalkSpeed * multiplier
+    ply:SetRunSpeed( math.Clamp( runSpeed, minRunSpeed, baseRunSpeed ) )
+    ply:SetWalkSpeed( math.Clamp( walkSpeed, minWalkSpeed, baseWalkSpeed ) )
 end
 
 local function adjustMovementSpeed( ply, wepNum ) 
@@ -79,7 +81,7 @@ end
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
-    wepNum = 0
+    local wepNum = 0
     if wep and nonEffectedWeapons[wep:GetClass()] == nil then
         wepNum = 1
     end
@@ -88,7 +90,7 @@ end
 
 local function onDrop( ply, wep )
     if not IsValid( ply ) then return end
-    wepNum = 0
+    local wepNum = 0
     if wep and nonEffectedWeapons[wep:GetClass()] == nil then
         wepNum = -1
     end
