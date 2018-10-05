@@ -53,8 +53,8 @@ local function setSpeed(ply, multiplier)
     -- set speed multiplier, 0 - 1
     local runSpeed = baseRunSpeed * multiplier
     local walkSpeed = baseWalkSpeed * multiplier
-    ply:SetRunSpeed( math.Clamp( runSpeed, minRunSpeed, baseRunSpeed ) )
-    ply:SetWalkSpeed( math.Clamp( walkSpeed, minWalkSpeed, baseWalkSpeed ) )
+    ply:SetRunSpeed( math.max( runSpeed, minRunSpeed ) )
+    ply:SetWalkSpeed( math.max( walkSpeed, minWalkSpeed ) )
 end
 
 local function adjustMovementSpeed( ply, wepNum ) 
@@ -72,7 +72,7 @@ local function adjustMovementSpeed( ply, wepNum )
             wepCount =  wepCount + 1
         end
     end
-    wepCount = math.max(wepCount + wepNum, 0)
+    wepCount = wepCount + wepNum
     
     local multiplier = movementMultiplier( wepCount ) 
     setSpeed(ply, multiplier)
