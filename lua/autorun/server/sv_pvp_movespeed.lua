@@ -44,43 +44,54 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
-local function movementMultiplier(weaponCount) 
+local function movementMultiplier( weaponCount )
+    if weaponCount < 1 then return 1 end
     return math.Clamp(1 - (1.9^( weaponCount))/100, 0, 1)
 end
 
-local function setSpeed(ply, multiplier) 
-    -- set speed multiplier, 0 - 1
-    ply:SetRunSpeed(math.Clamp(baseRunSpeed*multiplier,minRunSpeed, baseRunSpeed))
-    ply:SetWalkSpeed(math.Clamp(baseWalkSpeed*multiplier,minWalkSpeed, baseWalkSpeed))
+local function setSpeedFromWeaponCount( ply, weaponCount )
+    local multiplier = movementMultiplier( weaponCount )
+
+    local runSpeed = baseRunSpeed * multiplier
+    local walkSpeed = baseWalkSpeed * multiplier
+    ply:SetRunSpeed( math.max( runSpeed, minRunSpeed ) )
+    ply:SetWalkSpeed( math.max( walkSpeed, minWalkSpeed ) )
 end
 
-local function adjustMovementSpeed(ply) 
-    if playerIsInBuild( ply ) then 
-        setSpeed(ply, 1) 
-        return
-    end
-    
+local function getWeaponWeight( weapon )
+    -- the weight/significance of a weapon (1 for affecting weight 0 for not affecting weight)
+    if nonEffectedWeapons[weapon:GetClass()] then return 0 end
+    return 1
+end
+
+local function getWeaponCount( ply ) 
+    if playerIsInBuild( ply ) then return 0 end
     local weapons = ply:GetWeapons()
-    local wepCount = 0
-    
-    -- count weapons
-    for k, weapon in pairs(weapons) do
-        if nonEffectedWeapons[weapon:GetClass()] == nil then
-            wepCount =  wepCount+1
-        end
+    local weaponCount = 0
+    for _, weapon in pairs( weapons ) do
+        weaponCount = weaponCount + getWeaponWeight( weapon )
     end
-    
-    local multiplier = movementMultiplier(wepCount) 
-    setSpeed(ply, multiplier)
+    return weaponCount
 end
 
 -- Hook Functions --
-local function onEquipped( wep, ply )
+local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
-    adjustMovementSpeed( ply )
+    local weaponCount = getWeaponCount( ply ) + getWeaponWeight( wep )
+
+    setSpeedFromWeaponCount( ply, weaponCount )
+end
+
+local function onDrop( ply, wep )
+    if not IsValid( ply ) then return end
+    local weaponCount = getWeaponCount( ply ) - getWeaponWeight( wep )
+
+    setSpeedFromWeaponCount( ply, weaponCount )
 end
 
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
-hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquipped)
+hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquip)
 
+hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
+hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onDrop)
