@@ -60,10 +60,8 @@ end
 
 local function getWeaponWeight( weapon )
     -- the weight/significance of a weapon (1 for affecting weight 0 for not affecting weight)
-    if not nonEffectedWeapons[weapon:GetClass()] then
-        return 1
-    end
-    return 0
+    if nonEffectedWeapons[weapon:GetClass()] then return 0 end
+    return 1
 end
 
 local function getWeaponCount( ply ) 
