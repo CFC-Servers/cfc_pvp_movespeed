@@ -54,12 +54,12 @@ end
 local function setSpeedFromWeaponCount( ply, weaponCount )
     local multiplier = movementMultiplier( weaponCount )
 
-    local runSpeed = baseRunSpeed * multiplier
-    local walkSpeed = baseWalkSpeed * multiplier
-    ply:SetRunSpeed( math.max( runSpeed, minRunSpeed ) )
-    ply:SetWalkSpeed( math.max( walkSpeed, minWalkSpeed ) )
+    local newRunSpeed = baseRunSpeed * multiplier
+    local newWalkSpeed = baseWalkSpeed * multiplier
+    ply:SetRunSpeed( math.max( newRunSpeed, minRunSpeed ) )
+    ply:SetWalkSpeed( math.max( newWalkSpeed, minWalkSpeed ) )
 
-    if walkSpeed < 100 then
+    if newWalkSpeed < 100 then
         ply:SetCanWalk( false )
     else
         ply:SetCanWalk( true )
