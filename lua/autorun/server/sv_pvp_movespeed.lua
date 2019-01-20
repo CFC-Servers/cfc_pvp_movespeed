@@ -29,6 +29,8 @@ nonEffectedWeapons.weapon_smg1       = true
 nonEffectedWeapons.weapon_medkit     = true
 nonEffectedWeapons.weapon_frag       = true
 nonEffectedWeapons.weapon_rpg        = true
+nonEffectedWeapons.weapon_fists      = true
+nonEffectedWeapons.m9k_fists         = true
 
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
@@ -56,6 +58,12 @@ local function setSpeedFromWeaponCount( ply, weaponCount )
     local walkSpeed = baseWalkSpeed * multiplier
     ply:SetRunSpeed( math.max( runSpeed, minRunSpeed ) )
     ply:SetWalkSpeed( math.max( walkSpeed, minWalkSpeed ) )
+
+    if walkSpeed < 100 then
+        ply:SetCanWalk( false )
+    else
+        ply:SetCanWalk( true )
+    end
 end
 
 local function getWeaponWeight( weapon )
