@@ -11,26 +11,26 @@ local minRunSpeed = 70
 local minWalkSpeed = 35
 
 --List of weapons that will not be affected of the players movement speed
-local nonEffectedWeapons = {
-    weapon_physgun    = true,
-    weapon_physcannon = true,
-    none              = true,
-    laserpointer      = true,
-    remotecontroller  = true,
-    gmod_tool         = true,
-    gmod_camera       = true,
-    weapon_357        = true,
-    weapon_ar2        = true,
-    weapon_crossbow   = true,
-    weapon_crowbar    = true,
-    weapon_pistol     = true,
-    weapon_shotgun    = true,
-    weapon_smg1       = true,
-    weapon_medkit     = true,
-    weapon_frag       = true,
-    weapon_rpg        = true,
-    weapon_fists      = true,
-    m9k_fists         = true
+local weaponWeights = {
+    weapon_physgun    = 0,
+    weapon_physcannon = 0,
+    none              = 0,
+    laserpointer      = 0,
+    remotecontroller  = 0,
+    gmod_tool         = 0,
+    gmod_camera       = 0,
+    weapon_357        = 0,
+    weapon_ar2        = 0,
+    weapon_crossbow   = 0,
+    weapon_crowbar    = 0,
+    weapon_pistol     = 0,
+    weapon_shotgun    = 0,
+    weapon_smg1       = 0,
+    weapon_medkit     = 0,
+    weapon_frag       = 0,
+    weapon_rpg        = 0,
+    weapon_fists      = 0,
+    m9k_fists         = 0
 }
 
 -- Helper Functions --
@@ -70,9 +70,7 @@ local function setSpeedFromWeight( ply, totalWeight )
 end
 
 local function getWeaponWeight( weapon )
-    -- the weight/significance of a weapon (1 for affecting weight 0 for not affecting weight)
-    if nonEffectedWeapons[weapon:GetClass()] then return 0 end
-    return 1
+    return weaponWeights[weapon:GetClass()] or 1
 end
 
 local function getPlayerWeight( ply ) 
