@@ -10,7 +10,7 @@ local baseWalkSpeed = 200
 local minRunSpeed = 70
 local minWalkSpeed = 35
 
---List of weapons that will not be affected of the players movement speed
+--Weapon weights, weapons not in the table have a weight of 1
 local weaponWeights = {
     weapon_physgun    = 0,
     weapon_physcannon = 0,
