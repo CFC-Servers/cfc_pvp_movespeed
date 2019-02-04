@@ -10,27 +10,28 @@ local baseWalkSpeed = 200
 local minRunSpeed = 70
 local minWalkSpeed = 35
 
---List of weapons that will not be affected of the players movement speed
-local nonEffectedWeapons = {}
-nonEffectedWeapons.weapon_physgun    = true
-nonEffectedWeapons.weapon_physcannon = true
-nonEffectedWeapons.none              = true
-nonEffectedWeapons.laserpointer      = true
-nonEffectedWeapons.remotecontroller  = true
-nonEffectedWeapons.gmod_tool         = true
-nonEffectedWeapons.gmod_camera       = true
-nonEffectedWeapons.weapon_357        = true
-nonEffectedWeapons.weapon_ar2        = true
-nonEffectedWeapons.weapon_crossbow   = true
-nonEffectedWeapons.weapon_crowbar    = true
-nonEffectedWeapons.weapon_pistol     = true
-nonEffectedWeapons.weapon_shotgun    = true
-nonEffectedWeapons.weapon_smg1       = true
-nonEffectedWeapons.weapon_medkit     = true
-nonEffectedWeapons.weapon_frag       = true
-nonEffectedWeapons.weapon_rpg        = true
-nonEffectedWeapons.weapon_fists      = true
-nonEffectedWeapons.m9k_fists         = true
+--Weapon weights, weapons not in the table have a weight of 1
+local weaponWeights = {
+    weapon_physgun    = 0,
+    weapon_physcannon = 0,
+    none              = 0,
+    laserpointer      = 0,
+    remotecontroller  = 0,
+    gmod_tool         = 0,
+    gmod_camera       = 0,
+    weapon_357        = 0,
+    weapon_ar2        = 0,
+    weapon_crossbow   = 0,
+    weapon_crowbar    = 0,
+    weapon_pistol     = 0,
+    weapon_shotgun    = 0,
+    weapon_smg1       = 0,
+    weapon_medkit     = 0,
+    weapon_frag       = 0,
+    weapon_rpg        = 0,
+    weapon_fists      = 0,
+    m9k_fists         = 0
+}
 
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
@@ -46,13 +47,14 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
-local function movementMultiplier( weaponCount )
-    if weaponCount < 1 then return 1 end
-    return math.Clamp(1 - (1.9^( weaponCount))/100, 0, 1)
+local function movementMultiplier( totalWeight )
+    if totalWeight < 1 then return 1 end
+    local multiplier = 1 - ( 1.9 ^ totalWeight  )/ 100
+    return math.Clamp(multiplier, 0, 1)
 end
 
-local function setSpeedFromWeaponCount( ply, weaponCount )
-    local multiplier = movementMultiplier( weaponCount )
+local function setSpeedFromWeight( ply, totalWeight )
+    local multiplier = movementMultiplier( totalWeight )
 
     local newRunSpeed = baseRunSpeed * multiplier
     local newWalkSpeed = baseWalkSpeed * multiplier
@@ -60,6 +62,7 @@ local function setSpeedFromWeaponCount( ply, weaponCount )
     ply:SetWalkSpeed( math.max( newWalkSpeed, minWalkSpeed ) )
 
     if newWalkSpeed < 100 then
+        ply:ChatPrint("You are holding too many weapons! Drop some to regain speed.")
         ply:SetCanWalk( false )
     else
         ply:SetCanWalk( true )
@@ -67,34 +70,32 @@ local function setSpeedFromWeaponCount( ply, weaponCount )
 end
 
 local function getWeaponWeight( weapon )
-    -- the weight/significance of a weapon (1 for affecting weight 0 for not affecting weight)
-    if nonEffectedWeapons[weapon:GetClass()] then return 0 end
-    return 1
+    return weaponWeights[weapon:GetClass()] or 1
 end
 
-local function getWeaponCount( ply ) 
+local function getPlayerWeight( ply ) 
     if playerIsInBuild( ply ) then return 0 end
     local weapons = ply:GetWeapons()
-    local weaponCount = 0
+    local totalWeight = 0
     for _, weapon in pairs( weapons ) do
-        weaponCount = weaponCount + getWeaponWeight( weapon )
+        totalWeight = totalWeight + getWeaponWeight( weapon )
     end
-    return weaponCount
+    return totalWeight
 end
 
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
-    local weaponCount = getWeaponCount( ply ) + getWeaponWeight( wep )
+    local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
 
-    setSpeedFromWeaponCount( ply, weaponCount )
+    setSpeedFromWeight( ply, totalWeight )
 end
 
 local function onDrop( ply, wep )
     if not IsValid( ply ) then return end
-    local weaponCount = getWeaponCount( ply ) - getWeaponWeight( wep )
+    local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
 
-    setSpeedFromWeaponCount( ply, weaponCount )
+    setSpeedFromWeight( ply, totalWeight )
 end
 
 -- Hooks --
