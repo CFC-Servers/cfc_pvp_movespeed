@@ -97,22 +97,19 @@ local function getPlayerWeight( ply )
 end
 
 local function dropPlyWeapon( ply )
-    local currentWeapon = ply:GetActiveWeapon():GetClass()
-    if isUndroppable[currentWeapon] then
+    local currentWeapon = ply:GetActiveWeapon()
+    if isUndroppable[currentWeapon:GetClass()] then
         ply:ChatPrint("This weapon is unable to be dropped!")
         return
     end
 
-    ply:StripWeapon( currentWeapon )
+    ply:DropWeapon( currentWeapon )
+    
+    currentWeapon.despawn = timer.Simple( 10, function()
+        if not IsValid( currentWeapon ) then return end
+        if IsValid( currentWeapon.Owner ) then return end
 
-    local gun = ents.Create( currentWeapon )
-    gun:SetModel( gun:GetWeaponWorldModel() )
-    gun:SetPos( ply:LocalToWorld( ply:OBBCenter() ) + (ply:GetForward()*15) )
-    gun:Spawn()
-    gun.despawn = timer.Simple( 10, function()
-        if not IsValid( gun ) then return end
-
-        gun:Remove()
+        currentWeapon:Remove()
     end)
 end
 
