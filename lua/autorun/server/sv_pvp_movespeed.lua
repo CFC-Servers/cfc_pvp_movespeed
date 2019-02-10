@@ -33,6 +33,19 @@ local weaponWeights = {
     m9k_fists         = 0
 }
 
+local isUndroppable = {
+    weapon_physgun      = true,
+    weapon_physcannon   = true,
+    weapon_none         = true,
+    gmod_tool           = true,
+    gmod_camera         = true
+}
+
+local isDropCommand = {
+    "!drop" = true,
+    "/drop" = true,
+}
+
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
 local function generateCFCHook( hookname )
@@ -83,6 +96,26 @@ local function getPlayerWeight( ply )
     return totalWeight
 end
 
+local function dropPlyWeapon( ply )
+    local currentWeapon = ply:GetActiveWeapon():GetClass()
+    if isUndroppable[currentWeapon] then
+        ply:ChatPrint("This weapon is unable to be dropped!")
+        return
+    end
+
+    ply:StripWeapon( currentWeapon )
+
+    local gun = ents.Create( currentWeapon )
+    gun:SetModel( gun:GetWeaponWorldModel() )
+    gun:SetPos( ply:LocalToWorld( ply:OBBCenter() ) + (ply:GetForward()*15) )
+    gun:Spawn()
+    gun.despawn = timer.Simple( 10, function()
+        if not IsValid( gun ) then return end
+
+        gun:Remove()
+    end)
+end
+
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not IsValid( ply ) then return end
@@ -98,9 +131,29 @@ local function onDrop( ply, wep )
     setSpeedFromWeight( ply, totalWeight )
 end
 
+local function onPlayerSay( ply, text )
+    if not IsValid( ply ) then return end
+    if not ply:Alive() then return end
+    
+    if isDropCommand[text] then 
+        dropPlyWeapon( ply )
+        return
+    end 
+end
+
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
 hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquip)
 
 hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
 hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onDrop)
+
+hook.Remove("PlayerSay", generateCFCHook("HandlePlySay"))
+hook.Add("PlayerSay", generateCFCHook("HandlePlySay"), onPlayerSay)
+
+--Networking
+util.AddNetworkString("dropPlayerWeapon")
+
+net.Receive("dropPlayerWeapon", function( len, ply )
+    dropPlyWeapon( ply )
+end)
