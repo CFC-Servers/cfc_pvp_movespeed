@@ -134,7 +134,6 @@ local function onPlayerSay( ply, text )
     
     if isDropCommand[text] then 
         dropPlyWeapon( ply )
-        return
     end 
 end
 
