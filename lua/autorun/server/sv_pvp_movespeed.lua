@@ -42,8 +42,8 @@ local isUndroppable = {
 }
 
 local isDropCommand = {
-    "!drop" = true,
-    "/drop" = true,
+    ["!drop"] = true,
+    ["/drop"] = true
 }
 
 -- Helper Functions --
@@ -134,6 +134,7 @@ local function onPlayerSay( ply, text )
     
     if isDropCommand[text] then 
         dropPlyWeapon( ply )
+        return ""
     end 
 end
 
