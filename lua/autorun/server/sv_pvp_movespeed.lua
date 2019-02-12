@@ -56,6 +56,10 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
+local function isValidPlayer( ply )
+    return IsValid( ply ) and ply:IsPlayer()
+end
+
 local function movementMultiplier( totalWeight )
     if totalWeight < 1 then return 1 end
     local multiplier = 1 - ( 1.9 ^ totalWeight  )/ 100
@@ -111,14 +115,14 @@ end
 
 -- Hook Functions --
 local function onEquip( wep, ply )
-    if not ( IsValid( ply ) and ply:IsPlayer() ) then return end
+    if not isValidPlayer( ply ) then return end
     local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
 end
 
 local function onDrop( ply, wep )
-    if not ( IsValid( ply ) and ply:IsPlayer() ) then return end
+    if not isValidPlayer( ply ) then return end
     local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
