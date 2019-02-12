@@ -1,7 +1,3 @@
--- Includes --
-include( "autorun/shared/sh_pvp_movespeed.lua" )
-AddCSLuaFile( "autorun/shared/sh_pvp_movespeed.lua" )
-
 -- default run and walk speed with 0 weapons
 local baseRunSpeed = 400
 local baseWalkSpeed = 200
@@ -60,6 +56,10 @@ local function playerIsInBuild( ply )
     return !getPlayerPvpMode( ply )
 end
 
+local function isValidPlayer( ply )
+    return IsValid( ply ) and ply:IsPlayer()
+end
+
 local function movementMultiplier( totalWeight )
     if totalWeight < 1 then return 1 end
     local multiplier = 1 - ( 1.9 ^ totalWeight  )/ 100
@@ -115,14 +115,14 @@ end
 
 -- Hook Functions --
 local function onEquip( wep, ply )
-    if not IsValid( ply ) then return end
+    if not isValidPlayer( ply ) then return end
     local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
 end
 
 local function onDrop( ply, wep )
-    if not IsValid( ply ) then return end
+    if not isValidPlayer( ply ) then return end
     local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
