@@ -29,19 +29,6 @@ local weaponWeights = {
     m9k_fists         = 0
 }
 
-local isUndroppable = {
-    weapon_physgun      = true,
-    weapon_physcannon   = true,
-    weapon_none         = true,
-    gmod_tool           = true,
-    gmod_camera         = true
-}
-
-local isDropCommand = {
-    ["!drop"] = true,
-    ["/drop"] = true
-}
-
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
 local function generateCFCHook( hookname )
@@ -66,7 +53,7 @@ local function movementMultiplier( totalWeight )
     return math.Clamp(multiplier, 0, 1)
 end
 
-local function setSpeedFromWeight( ply, totalWeight )
+function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
 
     local newRunSpeed = baseRunSpeed * multiplier
@@ -96,23 +83,6 @@ local function getPlayerWeight( ply )
     return totalWeight
 end
 
-local function dropPlyWeapon( ply )
-    local currentWeapon = ply:GetActiveWeapon()
-    if isUndroppable[currentWeapon:GetClass()] then
-        ply:ChatPrint("This weapon is unable to be dropped!")
-        return
-    end
-
-    ply:DropWeapon( currentWeapon )
-    
-    currentWeapon.despawn = timer.Simple( 10, function()
-        if not IsValid( currentWeapon ) then return end
-        if IsValid( currentWeapon.Owner ) then return end
-
-        currentWeapon:Remove()
-    end)
-end
-
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
@@ -128,29 +98,9 @@ local function onDrop( ply, wep )
     setSpeedFromWeight( ply, totalWeight )
 end
 
-local function onPlayerSay( ply, text )
-    if not IsValid( ply ) then return end
-    if not ply:Alive() then return end
-    
-    if isDropCommand[text] then 
-        dropPlyWeapon( ply )
-        return ""
-    end 
-end
-
 -- Hooks --
 hook.Remove("WeaponEquip", generateCFCHook("HandleEquipMS"))
 hook.Add("WeaponEquip", generateCFCHook("HandleEquipMS"), onEquip)
 
 hook.Remove("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"))
 hook.Add("PlayerDroppedWeapon", generateCFCHook("HandleDroppedWeaponMS"), onDrop)
-
-hook.Remove("PlayerSay", generateCFCHook("HandlePlySay"))
-hook.Add("PlayerSay", generateCFCHook("HandlePlySay"), onPlayerSay)
-
---Networking
-util.AddNetworkString("dropPlayerWeapon")
-
-net.Receive("dropPlayerWeapon", function( len, ply )
-    dropPlyWeapon( ply )
-end)
