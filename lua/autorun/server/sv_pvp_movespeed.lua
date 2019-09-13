@@ -28,6 +28,7 @@ local weaponWeights = {
     weapon_fists      = 0,
     m9k_fists         = 0
 }
+pvpMoveSpeed = {}
 
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
@@ -53,7 +54,7 @@ local function movementMultiplier( totalWeight )
     return math.Clamp(multiplier, 0, 1)
 end
 
-function setSpeedFromWeight( ply, totalWeight )
+local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
 
     local newRunSpeed = baseRunSpeed * multiplier
@@ -68,10 +69,12 @@ function setSpeedFromWeight( ply, totalWeight )
         ply:SetCanWalk( true )
     end
 end
+pvpMoveSpeed.setSpeedFromWeight = setSpeedFromWeight
 
 local function getWeaponWeight( weapon )
     return weaponWeights[weapon:GetClass()] or 1
 end
+pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
 local function getPlayerWeight( ply ) 
     if playerIsInBuild( ply ) then return 0 end
@@ -82,6 +85,7 @@ local function getPlayerWeight( ply )
     end
     return totalWeight
 end
+pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 
 -- Hook Functions --
 local function onEquip( wep, ply )

@@ -35,7 +35,7 @@ local function dropPlyWeapon( ply )
 end
 
 local function dropAllWeapons( ply )
-    setSpeedFromWeight( ply, 0 )
+    pvpMoveSpeed.setSpeedFromWeight( ply, 0 )
     ply:StripWeapons() 
 end
 
