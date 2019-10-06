@@ -69,7 +69,13 @@ function setSpeedFromWeight( ply, totalWeight )
     end
 end
 
+local function isPACWeapon( weapon )
+    return string.sub(weapong:GetClass(), 1, 4) == "pac_"
+end
+
 local function getWeaponWeight( weapon )
+    if isPACWeapon( weapon ) then return 0 end
+    
     return weaponWeights[weapon:GetClass()] or 1
 end
 
