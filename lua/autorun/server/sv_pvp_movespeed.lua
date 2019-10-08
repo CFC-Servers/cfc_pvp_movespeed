@@ -40,7 +40,7 @@ local function getPlayerPvpMode( ply )
 end
 
 local function playerIsInBuild( ply )
-    return !getPlayerPvpMode( ply )
+    return not getPlayerPvpMode( ply )
 end
 
 local function isValidPlayer( ply )
