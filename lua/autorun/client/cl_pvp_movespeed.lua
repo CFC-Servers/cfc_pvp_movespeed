@@ -1,10 +1,10 @@
---Sends to server to drop current weapon
+-- Sends to server to drop current weapon
 concommand.Add( "cfc_dropweapon", function()
-    net.Start("dropPlayerWeapon")
+    net.Start( "dropPlayerWeapon" )
     net.SendToServer()
-end)
+end )
 
 concommand.Add( "cfc_dropallweapons", function()
-    net.Start("dropAllWeapons")
+    net.Start( "dropAllWeapons" )
     net.SendToServer()
-end)
+end )
