@@ -19,7 +19,8 @@ commands.dropall = {
 
 local function dropPlyWeapon( ply )
     local currentWeapon = ply:GetActiveWeapon()
-    if isUndroppable[currentWeapon:GetClass()] then
+
+    if not IsValid( currentWeapon ) or isUndroppable[currentWeapon:GetClass()] then
         ply:ChatPrint( "This weapon is unable to be dropped!" )
         return
     end
