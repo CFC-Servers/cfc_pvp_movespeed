@@ -49,7 +49,7 @@ end
 
 local function movementMultiplier( totalWeight )
     if totalWeight < 1 then return 1 end
-    local multiplier = 1 - ( 1.9 ^ totalWeight  )/ 100
+    local multiplier = 1 - ( 1.9 ^ totalWeight  ) / 100
     return math.Clamp( multiplier, 0, 1 )
 end
 
