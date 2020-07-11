@@ -26,7 +26,9 @@ local weaponWeights = {
     weapon_frag       = 0,
     weapon_rpg        = 0,
     weapon_fists      = 0,
-    m9k_fists         = 0
+    m9k_fists         = 0,
+    m9k_m98b          = 2,
+    ins2_atow_rpg7    = 3,
 }
 pvpMoveSpeed = {}
 
