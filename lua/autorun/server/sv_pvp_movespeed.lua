@@ -29,6 +29,9 @@ local weaponWeights = {
     m9k_fists         = 0,
     m9k_m98b          = 2,
     ins2_atow_rpg7    = 3,
+    m9k_matador       = 3,
+    m9k_m202          = 3,
+    m9k_rpg7          = 3,
 }
 pvpMoveSpeed = {}
 
