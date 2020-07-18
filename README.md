@@ -1,4 +1,4 @@
-# cfc_pvp_movespeed
+# CFC PvP Movespeed
 Adjusts player movespeed based on how many SWEPs are equipped
 
 # Overview 
@@ -16,8 +16,8 @@ A players weight is the weight of all their weapons added together. This number 
 to calculate a movement speed multiplier
 
 # Commands
-`/dropall` deletes all weapons from the players inventory and resets their movespeed
-`/drop` drop the held weapon on the ground where it can be picked up again or it will despawn after 10 seconds
+- `/dropall` deletes all weapons from the players inventory and resets their movespeed
+- `/drop` drop the held weapon on the ground where it can be picked up again or it will despawn after 10 seconds
 
 # Setup
 Clone the addon into your gmod servers addon directory 
