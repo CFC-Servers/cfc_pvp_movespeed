@@ -1,122 +1,125 @@
--- default run and walk speed with 0 weapons
-local baseRunSpeed = 400
-local baseWalkSpeed = 200
+CFCPvpMovespeed = {
+    -- default run and walk speed with 0 weapons
+    baseRunSpeed = 400,
+    baseWalkSpeed = 200,
 
--- minimum run and walk speed ( must be greater than 0 )
-local minRunSpeed = 70
-local minWalkSpeed = 35
+    -- minimum run and walk speed ( must be greater than 0 )
+    minRunSpeed = 70,
+    minWalkSpeed = 35,
 
--- Weapon weights, weapons not in the table have a weight of 1
-local weaponWeights = {
-    weapon_physgun    = 0,
-    weapon_physcannon = 0,
-    none              = 0,
-    laserpointer      = 0,
-    remotecontroller  = 0,
-    gmod_tool         = 0,
-    gmod_camera       = 0,
-    weapon_357        = 0,
-    weapon_ar2        = 0,
-    weapon_crossbow   = 0,
-    weapon_crowbar    = 0,
-    weapon_pistol     = 0,
-    weapon_shotgun    = 0,
-    weapon_smg1       = 0,
-    weapon_medkit     = 0,
-    weapon_frag       = 0,
-    weapon_rpg        = 0,
-    weapon_fists      = 0,
-    m9k_fists         = 0,
-    m9k_m98b          = 2,
-    ins2_atow_rpg7    = 3,
-    m9k_matador       = 3,
-    m9k_m202          = 3,
-    m9k_rpg7          = 3,
-    m9k_minigun       = 4,
+    -- Weapon weights, weapons not in the table have a weight of 1
+    weaponWeights = {
+        weapon_physgun    = 0,
+        weapon_physcannon = 0,
+        none              = 0,
+        laserpointer      = 0,
+        remotecontroller  = 0,
+        gmod_tool         = 0,
+        gmod_camera       = 0,
+        weapon_357        = 0,
+        weapon_ar2        = 0,
+        weapon_crossbow   = 0,
+        weapon_crowbar    = 0,
+        weapon_pistol     = 0,
+        weapon_shotgun    = 0,
+        weapon_smg1       = 0,
+        weapon_medkit     = 0,
+        weapon_frag       = 0,
+        weapon_rpg        = 0,
+        weapon_fists      = 0,
+        m9k_fists         = 0,
+        m9k_m98b          = 2,
+        ins2_atow_rpg7    = 3,
+        m9k_matador       = 3,
+        m9k_m202          = 3,
+        m9k_rpg7          = 3,
+        m9k_minigun       = 4,
+    },
+
+    cfcHookPrefix = "CFC_PlyMS_"
 }
-pvpMoveSpeed = {}
 
 -- Helper Functions --
-local cfcHookPrefix = "CFC_PlyMS_"
-local function generateCFCHook( hookname )
-    return cfcHookPrefix .. hookname
+function CFCPvpMovespeed:generateCFCHook( hookname )
+    return self.cfcHookPrefix .. hookname
 end
 
-local function getPlayerPvpMode( ply )
+function CFCPvpMovespeed.playerIsInBuild( ply )
     return ply:GetNWBool( "CFC_PvP_Mode", false )
 end
 
-local function playerIsInBuild( ply )
-    return not getPlayerPvpMode( ply )
-end
-
-local function isValidPlayer( ply )
+function CFCPvpMovespeed.isValidPlayer( ply )
     return IsValid( ply ) and ply:IsPlayer()
 end
 
-local function movementMultiplier( totalWeight )
+function CFCPvpMovespeed.movementMultiplier( totalWeight )
     if totalWeight < 1 then return 1 end
     local multiplier = 1 - ( 1.9 ^ totalWeight  ) / 100
     return math.Clamp( multiplier, 0, 1 )
 end
 
-local function setSpeedFromWeight( ply, totalWeight )
+function CFCPvpMovespeed:setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
 
-    local newRunSpeed = baseRunSpeed * multiplier
-    local newWalkSpeed = baseWalkSpeed * multiplier
+    local newRunSpeed = self.baseRunSpeed * multiplier
+    local newWalkSpeed = self.baseWalkSpeed * multiplier
+
     ply:SetRunSpeed( math.max( newRunSpeed, minRunSpeed ) )
     ply:SetWalkSpeed( math.max( newWalkSpeed, minWalkSpeed ) )
 
     if newWalkSpeed < 100 then
         ply:ChatPrint( "You are holding too many weapons! Drop some to regain speed." )
         ply:SetCanWalk( false )
-    else
-        ply:SetCanWalk( true )
+        return
     end
-end
-pvpMoveSpeed.setSpeedFromWeight = setSpeedFromWeight
 
-local function isPACWeapon( weapon )
+    ply:SetCanWalk( true )
+end
+
+function CFCPvpMovespeed.isPACWeapon( weapon )
     return string.sub( weapon:GetClass(), 1, 4 ) == "pac_"
 end
 
-local function getWeaponWeight( weapon )
-    if isPACWeapon( weapon ) then return 0 end
+function CFCPvpMovespeed:getWeaponWeight( weapon )
+    if self.isPACWeapon( weapon ) then return 0 end
 
-    return weaponWeights[weapon:GetClass()] or 1
+    return self.weaponWeights[weapon:GetClass()] or 1
 end
-pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
-local function getPlayerWeight( ply )
-    if playerIsInBuild( ply ) then return 0 end
+function CFCPvpMovespeed:getPlayerWeight( ply )
+    if self.playerIsInBuild( ply ) then return 0 end
     local weapons = ply:GetWeapons()
     local totalWeight = 0
+
     for _, weapon in pairs( weapons ) do
-        totalWeight = totalWeight + getWeaponWeight( weapon )
+        totalWeight = totalWeight + self:getWeaponWeight( weapon )
     end
+
     return totalWeight
 end
-pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 
 -- Hook Functions --
-local function onEquip( wep, ply )
+function CFCPvpMovespeed:OnEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
-    local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
+    local totalWeight = self:getPlayerWeight( ply ) + self:getWeaponWeight( wep )
 
-    setSpeedFromWeight( ply, totalWeight )
+    self:setSpeedFromWeight( ply, totalWeight )
 end
 
-local function onDrop( ply, wep )
+function CFCPvpMovespeed:OnDrop( ply, wep )
     if not isValidPlayer( ply ) then return end
-    local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
+    local totalWeight = self:getPlayerWeight( ply ) - self:getWeaponWeight( wep )
 
-    setSpeedFromWeight( ply, totalWeight )
+    self:setSpeedFromWeight( ply, totalWeight )
 end
 
 -- Hooks --
 hook.Remove( "WeaponEquip", generateCFCHook( "HandleEquipMS" ) )
-hook.Add( "WeaponEquip", generateCFCHook( "HandleEquipMS" ), onEquip )
+hook.Add( "WeaponEquip", generateCFCHook( "HandleEquipMS" ), function( ... )
+    CFCPvpMovespeed:OnEquip( ... )
+end )
 
 hook.Remove( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ) )
-hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), onDrop )
+hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), function( ... )
+    CFCPvpMovespeed:OnDrop( ... )
+end )
