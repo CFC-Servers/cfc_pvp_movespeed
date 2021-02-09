@@ -1,4 +1,4 @@
-local isUndroppable = {
+CFCPvpMovespeed.isUndroppable = {
     weapon_physgun      = true,
     weapon_physcannon   = true,
     weapon_none         = true,
@@ -6,21 +6,23 @@ local isUndroppable = {
     gmod_camera         = true
 }
 
-local commands = {}
-commands.drop = {
-    ["!drop"] = true,
-    ["/drop"] = true,
-}
-commands.dropall = {
-    ["!dropall"] = true,
-    ["/dropall"] = true,
-    ["/strip"]   = true,
+CFCPvpMovespeed.commands = {
+    drop = {
+        ["!drop"] = true,
+        ["/drop"] = true,
+    },
+
+    dropall = {
+        ["!dropall"] = true,
+        ["/dropall"] = true,
+        ["/strip"]   = true,
+    }
 }
 
-local function dropPlyWeapon( ply )
+function CFCPvpMovespeed:dropPlyWeapon( ply )
     local currentWeapon = ply:GetActiveWeapon()
 
-    if not IsValid( currentWeapon ) or isUndroppable[currentWeapon:GetClass()] then
+    if not IsValid( currentWeapon ) or self.isUndroppable[currentWeapon:GetClass()] then
         ply:ChatPrint( "This weapon is unable to be dropped!" )
         return
     end
@@ -35,37 +37,38 @@ local function dropPlyWeapon( ply )
     end )
 end
 
-local function dropAllWeapons( ply )
-    pvpMoveSpeed.setSpeedFromWeight( ply, 0 )
+function CFCPvpMovespeed:dropAllWeapons( ply )
+    self:setSpeedFromWeight( ply, 0 )
     ply:StripWeapons()
 end
 
-local function onPlayerSay( ply, text )
+function CFCPvpMovespeed:OnPlayerSay( ply, text )
     if not IsValid( ply ) then return end
     if not ply:Alive() then return end
 
-    if commands.drop[text] then
+    if self.commands.drop[text] then
         dropPlyWeapon( ply )
-    elseif commands.dropall[text] then
-        dropAllWeapons( ply )
-    else
-        return
+        return ""
     end
-    return ""
+
+    if self.commands.dropall[text] then
+        dropAllWeapons( ply )
+        return ""
+    end
 end
 
 hook.Remove( "PlayerSay", "CFC_PlyMS_HandlePlySay" )
-hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
+hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", function( ... ) CFCPvpMovespeed:OnPlayerSay( ... ) end )
 
 -- Networking
-util.AddNetworkString( "dropPlayerWeapon" )
-util.AddNetworkString( "dropAllWeapons" )
+util.AddNetworkString( "CFC_PvpMovespeed_dropPlayerWeapon" )
+util.AddNetworkString( "CFC_PvpMovespeed_dropAllWeapons" )
 
-net.Receive( "dropPlayerWeapon", function( len, ply )
-    dropPlyWeapon( ply )
+net.Receive( "CFC_PvpMovespeed_dropPlayerWeapon", function( len, ply )
+    CFCPvpMovespeed:dropPlyWeapon( ply )
 end )
 
-net.Receive( "dropAllWeapons", function( len, ply )
-    dropAllWeapons( ply )
+net.Receive( "CFC_PvpMovespeed_dropAllWeapons", function( len, ply )
+    CFCPvpMovespeed:dropAllWeapons( ply )
 end )
 
