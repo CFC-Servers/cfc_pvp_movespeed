@@ -32,7 +32,7 @@ local weaponWeights = {
     m9k_matador       = 3,
     m9k_m202          = 3,
     m9k_rpg7          = 3,
-    m9k_minigun       = 4,
+    m9k_minigun       = 6,
 }
 pvpMoveSpeed = {}
 
