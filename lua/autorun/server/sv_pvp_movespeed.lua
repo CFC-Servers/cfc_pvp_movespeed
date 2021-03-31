@@ -116,7 +116,7 @@ local function onDrop( ply, wep )
     setSpeedFromWeight( ply, totalWeight )
 end
 
-local function onForcedWeigh( ply, wep )
+local function onForcedWeigh( ply )
     if not isValidPlayer( ply ) then return end
     if hook.Run( generateCFCHook( "CanChangeMoveSpeed" ), ply ) == false then return end
     local totalWeight = getPlayerWeight( ply )
