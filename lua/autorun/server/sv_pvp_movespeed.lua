@@ -116,9 +116,20 @@ local function onDrop( ply, wep )
     setSpeedFromWeight( ply, totalWeight )
 end
 
+local function onForcedWeigh( ply, wep )
+    if not isValidPlayer( ply ) then return end
+    if hook.Run( generateCFCHook( "DisallowChangeMoveSpeed" ), ply ) ~= nil then return end
+    local totalWeight = getPlayerWeight( ply )
+
+    setSpeedFromWeight( ply, totalWeight )
+end
+
 -- Hooks --
 hook.Remove( "WeaponEquip", generateCFCHook( "HandleEquipMS" ) )
 hook.Add( "WeaponEquip", generateCFCHook( "HandleEquipMS" ), onEquip )
 
 hook.Remove( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ) )
 hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), onDrop )
+
+hook.Remove( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ) )
+hook.Add( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ), onForcedWeigh )
