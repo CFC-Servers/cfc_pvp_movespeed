@@ -102,6 +102,7 @@ pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
+    if hook.Run( generateCFCHook( "DisallowChangeMoveSpeed" ) ) ~= nil then return end
     local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
@@ -109,6 +110,7 @@ end
 
 local function onDrop( ply, wep )
     if not isValidPlayer( ply ) then return end
+    if hook.Run( generateCFCHook( "DisallowChangeMoveSpeed" ) ) ~= nil then return end
     local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
