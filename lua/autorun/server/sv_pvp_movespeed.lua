@@ -133,3 +133,20 @@ hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), onD
 
 hook.Remove( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ) )
 hook.Add( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ), onForcedWeigh )
+
+-- Powerup Hooks --
+
+hook.Remove( "CFC_Powerups_PowerupRemoved", generateCFCHook( "PowerupRemoved" ) )
+hook.Add( "CFC_Powerups_PowerupRemoved", generateCFCHook( "PowerupRemoved" ), function( ply, powerupId )
+    if powerupId ~= "powerup_speed" then return end
+    if not isValidPlayer( ply ) then return end
+    if not ply:Alive() then return end
+
+    hook.Run( generateCFCHook( "WeighPlayer" ), ply )
+end )
+
+hook.Remove( generateCFCHook( "CanChangeMoveSpeed" ), generateCFCHook( "AccountForSpeedPowerup" ) )
+hook.Add( generateCFCHook( "CanChangeMoveSpeed" ), generateCFCHook( "AccountForSpeedPowerup" ), function( ply )
+    if not PowerupManager then return end
+    if PowerupManager.hasPowerup( ply, "powerup_speed" ) then return false end
+end )
