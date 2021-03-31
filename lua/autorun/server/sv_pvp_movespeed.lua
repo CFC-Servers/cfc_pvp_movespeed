@@ -37,11 +37,6 @@ local weaponWeights = {
 pvpMoveSpeed = {}
 
 -- Helper Functions --
-local cfcHookPrefix = "CFC_PlyMS_"
-local function generateCFCHook( hookname )
-    return cfcHookPrefix .. hookname
-end
-
 local function getPlayerPvpMode( ply )
     return ply:GetNWBool( "CFC_PvP_Mode", false )
 end
@@ -102,7 +97,7 @@ pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
-    if hook.Run( generateCFCHook( "CanChangeMoveSpeed" ), ply ) == false then return end
+    if hook.Run( "CFC_PlyMS_CanChangeMoveSpeed", ply ) == false then return end
     local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
@@ -110,7 +105,7 @@ end
 
 local function onDrop( ply, wep )
     if not isValidPlayer( ply ) then return end
-    if hook.Run( generateCFCHook( "CanChangeMoveSpeed" ), ply ) == false then return end
+    if hook.Run( "CFC_PlyMS_CanChangeMoveSpeed", ply ) == false then return end
     local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
 
     setSpeedFromWeight( ply, totalWeight )
@@ -118,35 +113,29 @@ end
 
 local function onForcedWeigh( ply )
     if not isValidPlayer( ply ) then return end
-    if hook.Run( generateCFCHook( "CanChangeMoveSpeed" ), ply ) == false then return end
+    if hook.Run( "CFC_PlyMS_CanChangeMoveSpeed", ply ) == false then return end
     local totalWeight = getPlayerWeight( ply )
 
     setSpeedFromWeight( ply, totalWeight )
 end
 
 -- Hooks --
-hook.Remove( "WeaponEquip", generateCFCHook( "HandleEquipMS" ) )
-hook.Add( "WeaponEquip", generateCFCHook( "HandleEquipMS" ), onEquip )
+hook.Add( "WeaponEquip", "CFC_PlyMS_HandleEquipMS", onEquip )
 
-hook.Remove( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ) )
-hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), onDrop )
+hook.Add( "PlayerDroppedWeapon", "CFC_PlyMS_HandleDroppedWeaponMS", onDrop )
 
-hook.Remove( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ) )
-hook.Add( generateCFCHook( "WeighPlayer" ), generateCFCHook( "ForcedWeigh" ), onForcedWeigh )
+hook.Add( "CFC_PlyMS_WeighPlayer", "CFC_PlyMS_ForcedWeigh", onForcedWeigh )
 
 -- Powerup Hooks --
-
-hook.Remove( "CFC_Powerups_PowerupRemoved", generateCFCHook( "PowerupRemoved" ) )
-hook.Add( "CFC_Powerups_PowerupRemoved", generateCFCHook( "PowerupRemoved" ), function( ply, powerupId )
+hook.Add( "CFC_Powerups_PowerupRemoved", "CFC_PlyMS_PowerupRemoved", function( ply, powerupId )
     if powerupId ~= "powerup_speed" then return end
     if not isValidPlayer( ply ) then return end
     if not ply:Alive() then return end
 
-    hook.Run( generateCFCHook( "WeighPlayer" ), ply )
+    hook.Run( "CFC_PlyMS_WeighPlayer", ply )
 end )
 
-hook.Remove( generateCFCHook( "CanChangeMoveSpeed" ), generateCFCHook( "AccountForSpeedPowerup" ) )
-hook.Add( generateCFCHook( "CanChangeMoveSpeed" ), generateCFCHook( "AccountForSpeedPowerup" ), function( ply )
+hook.Add( "CFC_PlyMS_CanChangeMoveSpeed", "CFC_PlyMS_AccountForSpeedPowerup", function( ply )
     if not PowerupManager then return end
     if PowerupManager.hasPowerup( ply, "powerup_speed" ) then return false end
 end )
