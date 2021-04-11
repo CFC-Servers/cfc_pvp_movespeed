@@ -69,7 +69,7 @@ local function setSpeedFromWeight( ply, totalWeight )
     ply:SetWalkSpeed( math.max( newWalkSpeed, minWalkSpeed ) )
 
     if newWalkSpeed < 100 then
-        ply:ChatPrint( "You are holding too many weapons! /Drop some to regain speed." )
+        ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
         ply:SetCanWalk( false )
     else
         ply:SetCanWalk( true )
