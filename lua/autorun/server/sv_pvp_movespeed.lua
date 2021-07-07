@@ -28,13 +28,13 @@ local weaponWeights = {
     weapon_rpg        = 3,
     m9k_fists         = 0,
     m9k_m98b          = 2,
-    weapon_rpg        = 3,
-    ins2_atow_rpg7    = 3,
+    weapon_rpg        = 4,
+    ins2_atow_rpg7    = 4,
     m9k_matador       = 3,
     m9k_m202          = 3,
     m9k_rpg7          = 3,
     m9k_minigun       = 6,
-    weapon_lfsmissilelauncher = 3,
+    weapon_lfsmissilelauncher = 4,
 }
 pvpMoveSpeed = {}
 
