@@ -25,6 +25,7 @@ local weaponWeights = {
     weapon_medkit     = 0,
     weapon_frag       = 0,
     weapon_fists      = 0,
+    weapon_rpg        = 3,
     m9k_fists         = 0,
     m9k_m98b          = 2,
     weapon_rpg        = 3,
@@ -33,6 +34,7 @@ local weaponWeights = {
     m9k_m202          = 3,
     m9k_rpg7          = 3,
     m9k_minigun       = 6,
+    weapon_lfsmissilelauncher = 3,
 }
 pvpMoveSpeed = {}
 
