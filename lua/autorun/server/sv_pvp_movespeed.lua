@@ -6,27 +6,9 @@ local baseWalkSpeed = 200
 local minRunSpeed = 70
 local minWalkSpeed = 35
 
--- Weapon weights, weapons not in the table have a weight of 1
+local defaultWeight = 0
 local weaponWeights = {
-    weapon_physgun    = 0,
-    weapon_physcannon = 0,
-    none              = 0,
-    laserpointer      = 0,
-    remotecontroller  = 0,
-    gmod_tool         = 0,
-    gmod_camera       = 0,
-    weapon_357        = 0,
-    weapon_ar2        = 0,
-    weapon_crossbow   = 0,
-    weapon_crowbar    = 0,
-    weapon_pistol     = 0,
-    weapon_shotgun    = 0,
-    weapon_smg1       = 0,
-    weapon_medkit     = 0,
-    weapon_frag       = 0,
-    weapon_fists      = 0,
     weapon_rpg        = 3,
-    m9k_fists         = 0,
     m9k_m98b          = 2,
     weapon_rpg        = 4,
     ins2_atow_rpg7    = 4,
@@ -86,7 +68,7 @@ end
 local function getWeaponWeight( weapon )
     if isPACWeapon( weapon ) then return 0 end
 
-    return weaponWeights[weapon:GetClass()] or 1
+    return weaponWeights[weapon:GetClass()] or defaultWeight
 end
 pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
