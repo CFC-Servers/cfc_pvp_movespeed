@@ -26,14 +26,6 @@ local function generateCFCHook( hookname )
     return cfcHookPrefix .. hookname
 end
 
-local function getPlayerPvpMode( ply )
-    return ply:GetNWBool( "CFC_PvP_Mode", false )
-end
-
-local function playerIsInBuild( ply )
-    return not getPlayerPvpMode( ply )
-end
-
 local function isValidPlayer( ply )
     return IsValid( ply ) and ply:IsPlayer()
 end
@@ -73,7 +65,7 @@ end
 pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
 local function getPlayerWeight( ply )
-    if playerIsInBuild( ply ) then return 0 end
+    if ply:isInBuild() then return 0 end
     local weapons = ply:GetWeapons()
     local totalWeight = 0
     for _, weapon in pairs( weapons ) do
