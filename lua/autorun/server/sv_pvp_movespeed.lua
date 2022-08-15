@@ -10,7 +10,6 @@ local defaultWeight = 0
 local weaponWeights = {
     weapon_rpg        = 3,
     m9k_m98b          = 2,
-    weapon_rpg        = 4,
     ins2_atow_rpg7    = 4,
     m9k_matador       = 3,
     m9k_m202          = 3,
@@ -65,7 +64,7 @@ end
 pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
 local function getPlayerWeight( ply )
-    if ply:isInBuild() then return 0 end
+    if ply:IsInBuild() then return 0 end
     local weapons = ply:GetWeapons()
     local totalWeight = 0
     for _, weapon in pairs( weapons ) do
