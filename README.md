@@ -25,12 +25,14 @@ to calculate a movement speed multiplier
 # Setup
 Clone the addon into your gmod servers addon directory 
 
-# Compatibility / Added Functions
+# Compatibility
 - Other addons that use `:SetRunSpeed()` or `:SetWalkSpeed()` will automatically be accounted for, setting the player's base run/walk speeds.
   - The original, unwrapped functions can be found in `pvpMoveSpeed.wrappedFuncs.Player`
   - Note that [the config](https://github.com/CFC-Servers/cfc_pvp_movespeed/blob/master/lua/autorun/server/sv_pvp_movespeed.lua) sets minimum walk and run speeds, so you'll need to use the **unwrapped** `:Set___Speed()` functions if you want to force someone's speed to 0. The player's speed will revert once they equip/drop weapons when using this method, however.
     - *(TODO: Once the naming scheme is resolved and the config is globalized, the above quirk can be trivialized. Either by dynamically modifying the min speed, or by adding a utility function that overrides player speed and temporarily disables the weight system on them.)*
 - If one of your addons defines `Player:IsInBuild()`, it will be used to disable weapon weights on buildmode players.
+
+# Added Functions
 - `Player:SetMoveSpeed( runSpeed, walkSpeed )`
   - `runSpeed` - Base run speed to use. (Default: `normalRunSpeed = 400` )
   - `walkSpeed` - Base walk speed to use. (Default: `normalWalkSpeed = 200` )
