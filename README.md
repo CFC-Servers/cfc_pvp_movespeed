@@ -15,9 +15,11 @@ A players weight is the weight of all their weapons added together. This number 
 [lua/autorun/server/sv_pvp_movespeed.lua](https://github.com/CFC-Servers/cfc_pvp_movespeed/blob/master/lua/autorun/server/sv_pvp_movespeed.lua) 
 to calculate a movement speed multiplier
 
-# Commands
+# Chat Commands
 - `/dropall` deletes all weapons from the players inventory and resets their movespeed
+  - Can also be ran via the `cfc_dropallweapons` concmd.
 - `/drop` drop the held weapon on the ground where it can be picked up again or it will despawn after 10 seconds
+  - Can also be ran via the `cfc_dropweapon` concmd.
 
 # Setup
 Clone the addon into your gmod servers addon directory 
