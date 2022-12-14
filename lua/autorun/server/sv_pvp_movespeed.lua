@@ -6,6 +6,7 @@ local normalWalkSpeed = 200
 local minRunSpeed = 70
 local minWalkSpeed = 35
 local walkSpeedAlert = 100 -- If the player's walk speed is below this due to weapon weight, they will be alerted
+local walkSpeedAlertCooldown = 0.5 -- Prevents spam from the above message (e.g. external addon sets both run and move speed while ply has high weight => double print)
 
 local defaultWeight = 0
 local weaponWeights = {
@@ -69,8 +70,16 @@ local function setSpeedFromWeight( ply, totalWeight )
     plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
     plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
-    if newWalkSpeed < walkSpeedAlert and baseWalkSpeed >= walkSpeedAlert then
+    local slowDueToWeight = newWalkSpeed < walkSpeedAlert and baseWalkSpeed >= walkSpeedAlert
+
+    if slowDueToWeight then
+        local now = RealTime()
+        local canAlertTime = ply.CFC_PlyMS_SlownessAlertReadyTime or 0
+
+        if now < canAlertTime then return end
+
         ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
+        ply.CFC_PlyMS_SlownessAlertReadyTime = now + walkSpeedAlertCooldown
     end
 end
 pvpMoveSpeed.setSpeedFromWeight = setSpeedFromWeight
