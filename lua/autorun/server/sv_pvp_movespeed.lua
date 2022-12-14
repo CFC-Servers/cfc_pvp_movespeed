@@ -20,6 +20,18 @@ local weaponWeights = {
 }
 pvpMoveSpeed = {}
 
+
+local plyMeta = FindMetaTable( "Player" )
+pvpMoveSpeed.wrappedFuncs = {
+    Player = {
+        SetRunSpeed = plyMeta.SetRunSpeed,
+        SetWalkSpeed = plyMeta.SetWalkSpeed,
+    }
+}
+
+local plyWraps = pvpMoveSpeed.wrappedFuncs.Player
+
+
 -- Helper Functions --
 local cfcHookPrefix = "CFC_PlyMS_"
 local function generateCFCHook( hookname )
@@ -36,13 +48,23 @@ local function movementMultiplier( totalWeight )
     return math.Clamp( multiplier, 0, 1 )
 end
 
+local function getBaseRunSpeed( ply )
+    return ply.CFC_PlyMS_BaseRunSpeed or baseRunSpeed
+end
+pvpMoveSpeed.getBaseRunSpeed = getBaseRunSpeed
+
+local function getBaseWalkSpeed( ply )
+    return ply.CFC_PlyMS_BaseWalkSpeed or baseWalkSpeed
+end
+pvpMoveSpeed.getBaseWalkSpeed = getBaseWalkSpeed
+
 local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
 
-    local newRunSpeed = baseRunSpeed * multiplier
-    local newWalkSpeed = baseWalkSpeed * multiplier
-    ply:SetRunSpeed( math.max( newRunSpeed, minRunSpeed ) )
-    ply:SetWalkSpeed( math.max( newWalkSpeed, minWalkSpeed ) )
+    local newRunSpeed = getBaseRunSpeed( ply ) * multiplier
+    local newWalkSpeed = getBaseWalkSpeed( ply ) * multiplier
+    plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
+    plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
     if newWalkSpeed < 100 then
         ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
@@ -75,6 +97,23 @@ local function getPlayerWeight( ply )
 end
 pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 
+
+-- Wrappers --
+function plyMeta:SetRunSpeed( speed )
+    local weight = pvpMoveSpeed.getPlayerWeight( self )
+
+    self.CFC_PlyMS_BaseRunSpeed = speed or baseRunSpeed
+    pvpMoveSpeed.setSpeedFromWeight( self, weight )
+end
+
+function plyMeta:SetWalkSpeed( speed )
+    local weight = pvpMoveSpeed.getPlayerWeight( self )
+
+    self.CFC_PlyMS_BaseWalkSpeed = speed or baseWalkSpeed
+    pvpMoveSpeed.setSpeedFromWeight( self, weight )
+end
+
+
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
@@ -89,6 +128,7 @@ local function onDrop( ply, wep )
 
     setSpeedFromWeight( ply, totalWeight )
 end
+
 
 -- Hooks --
 hook.Remove( "WeaponEquip", generateCFCHook( "HandleEquipMS" ) )
