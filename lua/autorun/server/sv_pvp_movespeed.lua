@@ -82,7 +82,6 @@ local function setSpeedFromWeight( ply, totalWeight )
 
     local verySlow = newWalkSpeed < walkSpeedAlert
     local slowDueToWeight = verySlow and baseWalkSpeed >= walkSpeedAlert
-
     ply:SetCanWalk( not verySlow ) -- Prevent +slowwalk from letting the player move faster when overencumbered, without having to manage a third speed type
 
     if slowDueToWeight then
