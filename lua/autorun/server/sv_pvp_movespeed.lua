@@ -96,7 +96,7 @@ end
 pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
 local function getPlayerWeight( ply )
-    if ply:IsInBuild() then return 0 end
+    if ply.IsInBuild and ply:IsInBuild() then return 0 end
     local weapons = ply:GetWeapons()
     local totalWeight = 0
     for _, weapon in pairs( weapons ) do
