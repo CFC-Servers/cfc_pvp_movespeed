@@ -27,6 +27,7 @@ Clone the addon into your gmod servers addon directory
 
 # Compatibility / Added Functions
 - Other addons that use `:SetRunSpeed()` or `:SetWalkSpeed()` will automatically be accounted for, setting the player's base run/walk speeds.
+- If one of your addons defines `Player:IsInBuild()`, it will be used to disable weapon weights on buildmode players.
 - `Player:SetMoveSpeed( runSpeed, walkSpeed )`
   - `runSpeed` - Base run speed to use. (Default: `normalRunSpeed = 400` )
   - `walkSpeed` - Base walk speed to use. (Default: `normalWalkSpeed = 200` )
