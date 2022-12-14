@@ -60,6 +60,16 @@ local function getBaseWalkSpeed( ply )
 end
 pvpMoveSpeed.getBaseWalkSpeed = getBaseWalkSpeed
 
+local function alertAboutWeightSlowness( ply )
+    local now = RealTime()
+    local canAlertTime = ply.CFC_PlyMS_SlownessAlertReadyTime or 0
+
+    if now < canAlertTime then return end
+
+    ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
+    ply.CFC_PlyMS_SlownessAlertReadyTime = now + walkSpeedAlertCooldown
+end
+
 local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
     local baseRunSpeed = getBaseRunSpeed( ply )
@@ -71,15 +81,8 @@ local function setSpeedFromWeight( ply, totalWeight )
     plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
     local slowDueToWeight = newWalkSpeed < walkSpeedAlert and baseWalkSpeed >= walkSpeedAlert
-
     if slowDueToWeight then
-        local now = RealTime()
-        local canAlertTime = ply.CFC_PlyMS_SlownessAlertReadyTime or 0
-
-        if now < canAlertTime then return end
-
-        ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
-        ply.CFC_PlyMS_SlownessAlertReadyTime = now + walkSpeedAlertCooldown
+        alertAboutWeightSlowness( ply )
     end
 end
 pvpMoveSpeed.setSpeedFromWeight = setSpeedFromWeight
