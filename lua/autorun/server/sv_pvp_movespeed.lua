@@ -1,6 +1,6 @@
 -- default run and walk speed with 0 weapons
-local baseRunSpeed = 400
-local baseWalkSpeed = 200
+local normalRunSpeed = 400
+local normalWalkSpeed = 200
 
 -- minimum run and walk speed ( must be greater than 0 )
 local minRunSpeed = 70
@@ -50,26 +50,26 @@ local function movementMultiplier( totalWeight )
 end
 
 local function getBaseRunSpeed( ply )
-    return ply.CFC_PlyMS_BaseRunSpeed or baseRunSpeed
+    return ply.CFC_PlyMS_BaseRunSpeed or normalRunSpeed
 end
 pvpMoveSpeed.getBaseRunSpeed = getBaseRunSpeed
 
 local function getBaseWalkSpeed( ply )
-    return ply.CFC_PlyMS_BaseWalkSpeed or baseWalkSpeed
+    return ply.CFC_PlyMS_BaseWalkSpeed or normalWalkSpeed
 end
 pvpMoveSpeed.getBaseWalkSpeed = getBaseWalkSpeed
 
 local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
-    local plyBaseRunSpeed = getBaseRunSpeed( ply )
-    local plyBaseWalkSpeed = getBaseWalkSpeed( ply )
+    local baseRunSpeed = getBaseRunSpeed( ply )
+    local baseWalkSpeed = getBaseWalkSpeed( ply )
 
-    local newRunSpeed = plyBaseRunSpeed * multiplier
-    local newWalkSpeed = plyBaseWalkSpeed * multiplier
+    local newRunSpeed = baseRunSpeed * multiplier
+    local newWalkSpeed = baseWalkSpeed * multiplier
     plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
     plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
-    if newWalkSpeed < walkSpeedAlert and plyBaseWalkSpeed >= walkSpeedAlert then
+    if newWalkSpeed < walkSpeedAlert and baseWalkSpeed >= walkSpeedAlert then
         ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
     end
 end
@@ -102,14 +102,14 @@ pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 function plyMeta:SetRunSpeed( speed )
     local weight = pvpMoveSpeed.getPlayerWeight( self )
 
-    self.CFC_PlyMS_BaseRunSpeed = speed or baseRunSpeed
+    self.CFC_PlyMS_BaseRunSpeed = speed or normalRunSpeed
     pvpMoveSpeed.setSpeedFromWeight( self, weight )
 end
 
 function plyMeta:SetWalkSpeed( speed )
     local weight = pvpMoveSpeed.getPlayerWeight( self )
 
-    self.CFC_PlyMS_BaseWalkSpeed = speed or baseWalkSpeed
+    self.CFC_PlyMS_BaseWalkSpeed = speed or normalWalkSpeed
     pvpMoveSpeed.setSpeedFromWeight( self, weight )
 end
 
