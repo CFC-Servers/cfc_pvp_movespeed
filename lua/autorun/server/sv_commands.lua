@@ -61,11 +61,11 @@ hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
 util.AddNetworkString( "dropPlayerWeapon" )
 util.AddNetworkString( "dropAllWeapons" )
 
-net.Receive( "dropPlayerWeapon", function( len, ply )
+net.Receive( "dropPlayerWeapon", function( _, ply )
     dropPlyWeapon( ply )
 end )
 
-net.Receive( "dropAllWeapons", function( len, ply )
+net.Receive( "dropAllWeapons", function( _, ply )
     dropAllWeapons( ply )
 end )
 
