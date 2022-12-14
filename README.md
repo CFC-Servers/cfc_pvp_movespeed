@@ -21,3 +21,13 @@ to calculate a movement speed multiplier
 
 # Setup
 Clone the addon into your gmod servers addon directory 
+
+# Compatibility / Added Functions
+- Other addons that use `:SetRunSpeed()` or `:SetWalkSpeed()` will automatically be accounted for, setting the player's base run/walk speeds.
+- `Player:SetMoveSpeed( runSpeed, walkSpeed )`
+  - `runSpeed` - Base run speed to use. (Default: `normalRunSpeed = 400` )
+  - `walkSpeed` - Base walk speed to use. (Default: `normalWalkSpeed = 200` )
+  - Sets both run and walk speeds at the same time.
+- `Player:SetMoveSpeedMultiplier( multiplier )`
+  - `multiplier` - Movespeed multiplier to use. (Default: `1`)
+  - Sets base run and walk speeds to `normalSpeed * multiplier`
