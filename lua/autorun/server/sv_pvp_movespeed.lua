@@ -123,6 +123,24 @@ function plyMeta:SetWalkSpeed( speed )
 end
 
 
+-- New Player:() Functions --
+
+-- Sets run and walk speed at the same time
+function plyMeta:SetMoveSpeed( runSpeed, walkSpeed )
+    local weight = pvpMoveSpeed.getPlayerWeight( self )
+
+    self.CFC_PlyMS_BaseRunSpeed = runSpeed or normalRunSpeed
+    self.CFC_PlyMS_BaseWalkSpeed = walkSpeed or normalWalkSpeed
+    pvpMoveSpeed.setSpeedFromWeight( self, weight ) -- Avoid double-calling this by not using :SRS() and :SWS()
+end
+
+-- Sets run and walk speed based on a multiplier of the default speed
+function plyMeta:SetMoveSpeedMultiplier( multiplier )
+    multiplier = math.max( multiplier or 1, 0 )
+    self:SetMoveSpeed( normalRunSpeed * multiplier, normalWalkSpeed * multiplier )
+end
+
+
 -- Hook Functions --
 local function onEquip( wep, ply )
     if not isValidPlayer( ply ) then return end
