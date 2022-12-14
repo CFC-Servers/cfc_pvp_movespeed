@@ -5,6 +5,7 @@ local baseWalkSpeed = 200
 -- minimum run and walk speed ( must be greater than 0 )
 local minRunSpeed = 70
 local minWalkSpeed = 35
+local walkSpeedAlert = 100 -- If the player's walk speed is below this due to weapon weight, they will be alerted
 
 local defaultWeight = 0
 local weaponWeights = {
@@ -60,13 +61,15 @@ pvpMoveSpeed.getBaseWalkSpeed = getBaseWalkSpeed
 
 local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
+    local plyBaseRunSpeed = getBaseRunSpeed( ply )
+    local plyBaseWalkSpeed = getBaseWalkSpeed( ply )
 
-    local newRunSpeed = getBaseRunSpeed( ply ) * multiplier
-    local newWalkSpeed = getBaseWalkSpeed( ply ) * multiplier
+    local newRunSpeed = plyBaseRunSpeed * multiplier
+    local newWalkSpeed = plyBaseWalkSpeed * multiplier
     plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
     plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
-    if newWalkSpeed < 100 then
+    if newWalkSpeed < walkSpeedAlert and plyBaseWalkSpeed >= walkSpeedAlert then
         ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
     end
 end
