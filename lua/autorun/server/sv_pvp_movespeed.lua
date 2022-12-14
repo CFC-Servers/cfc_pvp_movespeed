@@ -17,7 +17,7 @@ local weaponWeights = {
     m9k_m202          = 3,
     m9k_rpg7          = 3,
     m9k_minigun       = 6,
-    cw_m249_official = 3,
+    cw_m249_official  = 3,
     weapon_lfsmissilelauncher = 4,
 }
 pvpMoveSpeed = {}
