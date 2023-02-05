@@ -32,6 +32,7 @@ pvpMoveSpeed.wrappedFuncs = {
 }
 
 local plyWraps = pvpMoveSpeed.wrappedFuncs.Player
+local slowWalkSpeed = 100 -- Default speed when holding +walk
 
 
 -- Helper Functions --
@@ -80,9 +81,11 @@ local function setSpeedFromWeight( ply, totalWeight )
     plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
     plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
+    local slowerThanSlowWalk = newWalkSpeed < slowWalkSpeed
+    ply:SetCanWalk( not slowerThanSlowWalk ) -- Prevent +walk from letting the player move faster when overencumbered, without having to manage a third speed type
+
     local verySlow = newWalkSpeed < walkSpeedAlert
     local slowDueToWeight = verySlow and baseWalkSpeed >= walkSpeedAlert
-    ply:SetCanWalk( not verySlow ) -- Prevent +slowwalk from letting the player move faster when overencumbered, without having to manage a third speed type
 
     if slowDueToWeight then
         alertAboutWeightSlowness( ply )
