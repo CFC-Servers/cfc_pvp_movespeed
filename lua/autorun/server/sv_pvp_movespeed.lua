@@ -1,6 +1,7 @@
 -- default run and walk speed with 0 weapons
 local normalRunSpeed = 400
 local normalWalkSpeed = 200
+local slowWalkSpeed = 100 -- Default GMod speed when holding +walk, not configurable.
 
 -- minimum run and walk speed ( must be greater than 0 )
 local minRunSpeed = 70
@@ -32,7 +33,6 @@ pvpMoveSpeed.wrappedFuncs = {
 }
 
 local plyWraps = pvpMoveSpeed.wrappedFuncs.Player
-local slowWalkSpeed = 100 -- Default speed when holding +walk
 
 
 -- Helper Functions --
