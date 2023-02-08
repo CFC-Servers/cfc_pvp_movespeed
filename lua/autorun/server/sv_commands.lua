@@ -37,7 +37,10 @@ end
 
 local function dropAllWeapons( ply )
     pvpMoveSpeed.setSpeedFromWeight( ply, 0 )
-    ply:StripWeapons()
+
+    for _, weapon in ipairs( ply:GetWeapons() ) do
+        ply:StripWeapon( weapon:GetClass() )
+    end
 end
 
 local function onPlayerSay( ply, text )
@@ -54,7 +57,6 @@ local function onPlayerSay( ply, text )
     return ""
 end
 
-hook.Remove( "PlayerSay", "CFC_PlyMS_HandlePlySay" )
 hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
 
 -- Networking
