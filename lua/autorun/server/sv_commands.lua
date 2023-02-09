@@ -17,6 +17,8 @@ commands.dropall = {
     ["/strip"]   = true,
 }
 
+local dropCooldown = 1
+
 local function isOnCooldown( ply )
     if not ply.WeaponDropCooldown then
         ply.WeaponDropCooldown = 0
@@ -27,7 +29,7 @@ local function isOnCooldown( ply )
         ply:PrintMessage( 4, "You cannot drop your weapon(s) yet!" )
         return true
     end
-    ply.WeaponDropCooldown = CurTime() + 0.5
+    ply.WeaponDropCooldown = CurTime() + dropCooldown
 end
 
 local function dropPlyWeapon( ply )
@@ -76,5 +78,5 @@ end
 
 hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
 
-concommand.Add( "cfc_dropallweapons", dropPlyWeapon )
-concommand.Add( "cfc_dropweapon", dropAllWeapons )
+concommand.Add( "cfc_dropweapon", dropPlyWeapon )
+concommand.Add( "cfc_dropallweapons", dropAllWeapons )
