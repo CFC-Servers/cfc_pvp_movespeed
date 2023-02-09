@@ -17,7 +17,22 @@ commands.dropall = {
     ["/strip"]   = true,
 }
 
+local function isOnCooldown( ply )
+    if not ply.WeaponDropCooldown then
+        ply.WeaponDropCooldown = 0
+        return false
+    end
+
+    if ply.WeaponDropCooldown > CurTime() then
+        ply:PrintMessage( 4, "You cannot drop your weapon(s) yet!" )
+        return true
+    end
+    ply.WeaponDropCooldown = CurTime() + 0.5
+end
+
 local function dropPlyWeapon( ply )
+    if isOnCooldown( ply ) then return end
+
     local currentWeapon = ply:GetActiveWeapon()
 
     if not IsValid( currentWeapon ) or isUndroppable[currentWeapon:GetClass()] then
@@ -36,6 +51,8 @@ local function dropPlyWeapon( ply )
 end
 
 local function dropAllWeapons( ply )
+    if isOnCooldown( ply ) then return end
+
     pvpMoveSpeed.setSpeedFromWeight( ply, 0 )
 
     for _, weapon in ipairs( ply:GetWeapons() ) do
@@ -59,15 +76,5 @@ end
 
 hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
 
--- Networking
-util.AddNetworkString( "dropPlayerWeapon" )
-util.AddNetworkString( "dropAllWeapons" )
-
-net.Receive( "dropPlayerWeapon", function( _, ply )
-    dropPlyWeapon( ply )
-end )
-
-net.Receive( "dropAllWeapons", function( _, ply )
-    dropAllWeapons( ply )
-end )
-
+concommand.Add( "cfc_dropallweapons", dropPlyWeapon )
+concommand.Add( "cfc_dropweapon", dropAllWeapons )
