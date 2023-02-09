@@ -20,6 +20,7 @@ commands.dropall = {
 local dropCooldown = 1
 
 local function isOnCooldown( ply )
+    if not IsValid( ply ) then return true end
     if not ply.WeaponDropCooldown then
         ply.WeaponDropCooldown = 0
         return false
