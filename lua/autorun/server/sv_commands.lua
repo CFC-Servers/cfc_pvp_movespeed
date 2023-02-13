@@ -79,5 +79,14 @@ end
 
 hook.Add( "PlayerSay", "CFC_PlyMS_HandlePlySay", onPlayerSay )
 
-concommand.Add( "cfc_dropweapon", dropPlyWeapon )
-concommand.Add( "cfc_dropallweapons", dropAllWeapons )
+-- Commands
+util.AddNetworkString( "dropPlayerWeapon" )
+util.AddNetworkString( "dropAllWeapons" )
+
+net.Receive( "dropPlayerWeapon", function( _, ply )
+    dropPlyWeapon( ply )
+end )
+
+net.Receive( "dropAllWeapons", function( _, ply )
+    dropAllWeapons( ply )
+end )
