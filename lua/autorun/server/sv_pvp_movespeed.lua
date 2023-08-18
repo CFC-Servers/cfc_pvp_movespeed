@@ -23,6 +23,7 @@ local weaponWeights = {
     m9k_pkm  = 3,
     m9k_m1918bar  = 3,
     m9k_m249lmg  = 3,
+    tfa_l4d2mw_riotshield = 3,
     m9k_ares_shrike  = 3,
     weapon_lfsmissilelauncher = 4,
 }
