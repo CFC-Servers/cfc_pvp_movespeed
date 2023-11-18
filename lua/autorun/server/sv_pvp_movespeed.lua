@@ -12,7 +12,6 @@ local walkSpeedAlertCooldown = 0.5 -- Prevents spam from the above message (e.g.
 local defaultWeight = 0
 local weaponWeights = {
     weapon_rpg        = 3,
-    m9k_m98b          = 2,
     ins2_atow_rpg7    = 4,
     m9k_matador       = 3,
     m9k_m202          = 3,
