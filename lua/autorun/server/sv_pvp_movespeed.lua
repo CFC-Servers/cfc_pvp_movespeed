@@ -6,9 +6,6 @@ local slowWalkSpeed = 100 -- Default GMod speed when holding +walk, not configur
 -- minimum run and walk speed ( must be greater than 0 )
 local minRunSpeed = 70
 local minWalkSpeed = 35
-local walkSpeedAlert = 100 -- If the player's walk speed is below this due to weapon weight, they will be alerted
-local walkSpeedAlertCooldown = 0.5 -- Prevents spam from the above message (e.g. external addon sets both run and move speed while ply has high weight => double print)
-
 local defaultWeight = 0
 local weaponWeights = {
     weapon_rpg        = 3,
