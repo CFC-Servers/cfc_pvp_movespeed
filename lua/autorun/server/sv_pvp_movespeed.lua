@@ -20,45 +20,27 @@ local weaponWeights = {
     tfa_l4d2mw_riotshield = 3,
     weapon_lfsmissilelauncher = 4,
 }
-pvpMoveSpeed = {}
-
 
 local plyMeta = FindMetaTable( "Player" )
-pvpMoveSpeed.wrappedFuncs = {
-    Player = {
-        SetRunSpeed = plyMeta.SetRunSpeed,
-        SetWalkSpeed = plyMeta.SetWalkSpeed,
-    }
-}
-
-local plyWraps = pvpMoveSpeed.wrappedFuncs.Player
-
+plyMeta.o_SetRunSpeed = plyMeta.o_SetRunSpeed or plyMeta.SetRunSpeed
+local o_SetRunSpeed = plyMeta.o_SetRunSpeed
+plyMeta.o_SetWalkSpeed = plyMeta.o_SetWalkSpeed or plyMeta.SetWalkSpeed
+local o_SetWalkSpeed = plyMeta.o_SetWalkSpeed
 
 -- Helper Functions --
-local cfcHookPrefix = "CFC_PlyMS_"
-local function generateCFCHook( hookname )
-    return cfcHookPrefix .. hookname
-end
-
-local function isValidPlayer( ply )
-    return IsValid( ply ) and ply:IsPlayer()
-end
-
-local function movementMultiplier( totalWeight )
-    if totalWeight < 1 then return 1 end
-    local multiplier = 1 - ( 1.9 ^ totalWeight  ) / 100
+local function movementMultiplier( weight )
+    if weight < 1 then return 1 end
+    local multiplier = 1 - ( 1.9 ^ weight  ) / 100
     return math.Clamp( multiplier, 0, 1 )
 end
 
 local function getBaseRunSpeed( ply )
     return ply.CFC_PlyMS_BaseRunSpeed or normalRunSpeed
 end
-pvpMoveSpeed.getBaseRunSpeed = getBaseRunSpeed
 
 local function getBaseWalkSpeed( ply )
     return ply.CFC_PlyMS_BaseWalkSpeed or normalWalkSpeed
 end
-pvpMoveSpeed.getBaseWalkSpeed = getBaseWalkSpeed
 
 local function alertAboutWeightSlowness( ply )
     local now = RealTime()
@@ -77,8 +59,8 @@ local function setSpeedFromWeight( ply, totalWeight )
 
     local newRunSpeed = baseRunSpeed * multiplier
     local newWalkSpeed = baseWalkSpeed * multiplier
-    plyWraps.SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
-    plyWraps.SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
+    o_SetRunSpeed( ply, math.max( newRunSpeed, minRunSpeed ) )
+    o_SetWalkSpeed( ply, math.max( newWalkSpeed, minWalkSpeed ) )
 
     local slowerThanSlowWalk = newWalkSpeed < slowWalkSpeed
     ply:SetCanWalk( not slowerThanSlowWalk ) -- Prevent +walk from letting the player move faster when overencumbered, without having to manage a third speed type
@@ -90,44 +72,37 @@ local function setSpeedFromWeight( ply, totalWeight )
         alertAboutWeightSlowness( ply )
     end
 end
-pvpMoveSpeed.setSpeedFromWeight = setSpeedFromWeight
-
-local function isPACWeapon( weapon )
-    return string.sub( weapon:GetClass(), 1, 4 ) == "pac_"
-end
 
 local function getWeaponWeight( weapon )
-    if isPACWeapon( weapon ) then return 0 end
+    if string.sub( weapon:GetClass(), 1, 4 ) == "pac_" then return 0 end
 
     return weaponWeights[weapon:GetClass()] or defaultWeight
 end
-pvpMoveSpeed.getWeaponWeight = getWeaponWeight
 
 local function getPlayerWeight( ply )
     if ply.IsInBuild and ply:IsInBuild() then return 0 end
-    local weapons = ply:GetWeapons()
+    local activeWeapon = ply:GetActiveWeapon()
     local totalWeight = 0
-    for _, weapon in pairs( weapons ) do
-        totalWeight = totalWeight + getWeaponWeight( weapon )
+    if IsValid( activeWeapon ) then
+        totalWeight = getWeaponWeight( activeWeapon )
     end
     return totalWeight
 end
-pvpMoveSpeed.getPlayerWeight = getPlayerWeight
 
 
 -- Wrappers --
 function plyMeta:SetRunSpeed( speed )
-    local weight = pvpMoveSpeed.getPlayerWeight( self )
+    local weight = getPlayerWeight( self )
 
     self.CFC_PlyMS_BaseRunSpeed = speed or normalRunSpeed
-    pvpMoveSpeed.setSpeedFromWeight( self, weight )
+    setSpeedFromWeight( self, weight )
 end
 
 function plyMeta:SetWalkSpeed( speed )
-    local weight = pvpMoveSpeed.getPlayerWeight( self )
+    local weight = getPlayerWeight( self )
 
     self.CFC_PlyMS_BaseWalkSpeed = speed or normalWalkSpeed
-    pvpMoveSpeed.setSpeedFromWeight( self, weight )
+    setSpeedFromWeight( self, weight )
 end
 
 
@@ -135,11 +110,11 @@ end
 
 -- Sets run and walk speed at the same time
 function plyMeta:SetMoveSpeed( runSpeed, walkSpeed )
-    local weight = pvpMoveSpeed.getPlayerWeight( self )
+    local weight = getPlayerWeight( self )
 
     self.CFC_PlyMS_BaseRunSpeed = runSpeed or normalRunSpeed
     self.CFC_PlyMS_BaseWalkSpeed = walkSpeed or normalWalkSpeed
-    pvpMoveSpeed.setSpeedFromWeight( self, weight ) -- Avoid double-calling this by not using :SRS() and :SWS()
+    setSpeedFromWeight( self, weight ) -- Avoid double-calling this by not using :SRS() and :SWS()
 end
 
 -- Sets run and walk speed based on a multiplier of the default speed
@@ -150,24 +125,10 @@ end
 
 
 -- Hook Functions --
-local function onEquip( wep, ply )
-    if not isValidPlayer( ply ) then return end
-    local totalWeight = getPlayerWeight( ply ) + getWeaponWeight( wep )
-
-    setSpeedFromWeight( ply, totalWeight )
+local function onWeaponSwitch( ply, _, wep )
+    setSpeedFromWeight( ply, getWeaponWeight( wep ) )
 end
-
-local function onDrop( ply, wep )
-    if not isValidPlayer( ply ) then return end
-    local totalWeight = getPlayerWeight( ply ) - getWeaponWeight( wep )
-
-    setSpeedFromWeight( ply, totalWeight )
-end
-
 
 -- Hooks --
-hook.Remove( "WeaponEquip", generateCFCHook( "HandleEquipMS" ) )
-hook.Add( "WeaponEquip", generateCFCHook( "HandleEquipMS" ), onEquip )
-
-hook.Remove( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ) )
-hook.Add( "PlayerDroppedWeapon", generateCFCHook( "HandleDroppedWeaponMS" ), onDrop )
+hook.Remove( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon" )
+hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", onWeaponSwitch )
