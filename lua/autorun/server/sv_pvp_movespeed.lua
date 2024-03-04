@@ -110,5 +110,4 @@ local function onWeaponSwitch( ply, _, wep )
 end
 
 -- Hooks --
-hook.Remove( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon" )
 hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", onWeaponSwitch )
