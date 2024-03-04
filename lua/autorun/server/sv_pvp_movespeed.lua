@@ -42,16 +42,6 @@ local function getBaseWalkSpeed( ply )
     return ply.CFC_PlyMS_BaseWalkSpeed or normalWalkSpeed
 end
 
-local function alertAboutWeightSlowness( ply )
-    local now = RealTime()
-    local canAlertTime = ply.CFC_PlyMS_SlownessAlertReadyTime or 0
-
-    if now < canAlertTime then return end
-
-    ply:ChatPrint( "You are holding too many weapons! /drop some to regain speed." )
-    ply.CFC_PlyMS_SlownessAlertReadyTime = now + walkSpeedAlertCooldown
-end
-
 local function setSpeedFromWeight( ply, totalWeight )
     local multiplier = movementMultiplier( totalWeight )
     local baseRunSpeed = getBaseRunSpeed( ply )
@@ -64,13 +54,6 @@ local function setSpeedFromWeight( ply, totalWeight )
 
     local slowerThanSlowWalk = newWalkSpeed < slowWalkSpeed
     ply:SetCanWalk( not slowerThanSlowWalk ) -- Prevent +walk from letting the player move faster when overencumbered, without having to manage a third speed type
-
-    local verySlow = newWalkSpeed < walkSpeedAlert
-    local slowDueToWeight = verySlow and baseWalkSpeed >= walkSpeedAlert
-
-    if slowDueToWeight then
-        alertAboutWeightSlowness( ply )
-    end
 end
 
 local function getWeaponWeight( weapon )
