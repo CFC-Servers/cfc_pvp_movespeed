@@ -6,16 +6,21 @@ local slowWalkSpeed = 100 -- Default GMod speed when holding +walk, not configur
 -- minimum run and walk speed ( must be greater than 0 )
 local minRunSpeed = 70
 local minWalkSpeed = 35
-local defaultWeight = 0
 local weaponWeights = {
-    weapon_rpg        = 3,
-    ins2_atow_rpg7    = 4,
-    m9k_matador       = 3,
-    m9k_m202          = 3,
-    m9k_rpg7          = 3,
-    m9k_minigun       = 6,
-    tfa_l4d2mw_riotshield = 3,
-    weapon_lfsmissilelauncher = 4,
+    weapon_lfsmissilelauncher = 6,
+    ins2_atow_rpg7          = 6,
+    weapon_rpg              = 5,
+    tfa_l4d2mw_riotshield   = 5,
+
+    m9k_suicide_bomb        = 5, -- experimental
+
+    m9k_minigun             = 5,
+    m9k_ares_shrike         = 3.5,
+    m9k_fg42                = 3.5,
+    m9k_m1918bar            = 3.5,
+    m9k_m249lmg             = 3.5,
+    m9k_m60                 = 3.5,
+    m9k_pkm                 = 3.5,
 }
 
 local plyMeta = FindMetaTable( "Player" )
@@ -56,7 +61,7 @@ end
 local function getWeaponWeight( weapon )
     if string.sub( weapon:GetClass(), 1, 4 ) == "pac_" then return 0 end
 
-    return weaponWeights[weapon:GetClass()] or defaultWeight
+    return weaponWeights[weapon:GetClass()] or 0
 end
 
 local function getPlayerWeight( ply )
