@@ -15,12 +15,6 @@ local weaponWeights = {
     m9k_suicide_bomb        = 5, -- experimental
 
     m9k_minigun             = 5,
-    m9k_ares_shrike         = 3.5,
-    m9k_fg42                = 3.5,
-    m9k_m1918bar            = 3.5,
-    m9k_m249lmg             = 3.5,
-    m9k_m60                 = 3.5,
-    m9k_pkm                 = 3.5,
 }
 
 local plyMeta = FindMetaTable( "Player" )
