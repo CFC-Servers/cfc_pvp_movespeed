@@ -67,6 +67,7 @@ local function onPlayerSay( ply, text )
     if not IsValid( ply ) then return end
     if not ply:Alive() then return end
 
+    text = string.lower( text )
     if commands.drop[text] then
         dropPlyWeapon( ply )
     elseif commands.dropall[text] then
