@@ -8,12 +8,11 @@ local minRunSpeed = 70
 local minWalkSpeed = 35
 local weaponWeights = {
     weapon_lfsmissilelauncher = 6,
+    glide_homing_launcher = 5,
     ins2_atow_rpg7          = 6,
     weapon_rpg              = 5,
     tfa_l4d2mw_riotshield   = 5,
-
     m9k_suicide_bomb        = 5, -- experimental
-
     m9k_minigun             = 5,
 }
 
