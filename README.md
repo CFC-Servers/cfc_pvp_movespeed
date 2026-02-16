@@ -16,7 +16,7 @@ A player's weight is determined by their currently active weapon. This weight va
 to calculate a movement speed multiplier. When players switch weapons, their speed updates accordingly.
 
 # Chat Commands
-- `/dropall` or `/strip` - Deletes all weapons from the player's inventory and resets their movespeed.
+- `/dropall` or `/strip` - Deletes all weapons from the player's inventory. Their movespeed is reset automatically the next time their active weapon changes.
   - Can also be ran via the `cfc_dropallweapons` console command.
 - `/drop` - Drops the currently held weapon on the ground where it can be picked up again, or it will despawn after 10 seconds.
   - Can also be ran via the `cfc_dropweapon` console command.
