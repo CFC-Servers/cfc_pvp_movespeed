@@ -92,8 +92,13 @@ end
 
 
 -- Hook Functions --
-local function onWeaponSwitch( ply )
-    setSpeedFromWeight( ply, getPlayerWeight( ply ) )
+local function onWeaponSwitch( ply, oldWep, newWep )
+    -- Defer recalculation so ply:GetActiveWeapon() (if used) reflects the new weapon
+    timer.Simple( 0, function()
+        if IsValid( ply ) then
+            setSpeedFromWeight( ply, getPlayerWeight( ply ) )
+        end
+    end )
 end
 
 -- Hooks --
