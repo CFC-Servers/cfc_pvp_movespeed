@@ -56,8 +56,6 @@ end
 local function dropAllWeapons( ply )
     if isOnCooldown( ply ) then return end
 
-    pvpMoveSpeed.setSpeedFromWeight( ply, 0 )
-
     for _, weapon in ipairs( ply:GetWeapons() ) do
         ply:StripWeapon( weapon:GetClass() )
     end

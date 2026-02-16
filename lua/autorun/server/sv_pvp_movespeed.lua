@@ -7,13 +7,11 @@ local slowWalkSpeed = 100 -- Default GMod speed when holding +walk, not configur
 local minRunSpeed = 70
 local minWalkSpeed = 35
 local weaponWeights = {
-    weapon_lfsmissilelauncher = 6,
-    glide_homing_launcher = 5,
-    ins2_atow_rpg7          = 6,
+    cfc_stinger_launcher = 4,
+    glide_homing_launcher = 4,
     weapon_rpg              = 5,
     tfa_l4d2mw_riotshield   = 5,
-    m9k_suicide_bomb        = 5, -- experimental
-    m9k_minigun             = 5,
+    m9k_suicide_bomb        = 5,
 }
 
 local plyMeta = FindMetaTable( "Player" )
@@ -51,20 +49,11 @@ local function setSpeedFromWeight( ply, totalWeight )
     ply:SetCanWalk( not slowerThanSlowWalk ) -- Prevent +walk from letting the player move faster when overencumbered, without having to manage a third speed type
 end
 
-local function getWeaponWeight( weapon )
-    if string.sub( weapon:GetClass(), 1, 4 ) == "pac_" then return 0 end
-
-    return weaponWeights[weapon:GetClass()] or 0
-end
-
 local function getPlayerWeight( ply )
     if ply.IsInBuild and ply:IsInBuild() then return 0 end
     local activeWeapon = ply:GetActiveWeapon()
-    local totalWeight = 0
-    if IsValid( activeWeapon ) then
-        totalWeight = getWeaponWeight( activeWeapon )
-    end
-    return totalWeight
+    if not IsValid( activeWeapon ) then return 0 end
+    return weaponWeights[activeWeapon:GetClass()] or 0
 end
 
 
@@ -92,7 +81,7 @@ function plyMeta:SetMoveSpeed( runSpeed, walkSpeed )
 
     self.CFC_PlyMS_BaseRunSpeed = runSpeed or normalRunSpeed
     self.CFC_PlyMS_BaseWalkSpeed = walkSpeed or normalWalkSpeed
-    setSpeedFromWeight( self, weight ) -- Avoid double-calling this by not using :SRS() and :SWS()
+    setSpeedFromWeight( self, weight )
 end
 
 -- Sets run and walk speed based on a multiplier of the default speed
@@ -101,11 +90,11 @@ function plyMeta:SetMoveSpeedMultiplier( multiplier )
     self:SetMoveSpeed( normalRunSpeed * multiplier, normalWalkSpeed * multiplier )
 end
 
-
--- Hook Functions --
-local function onWeaponSwitch( ply, _, wep )
-    setSpeedFromWeight( ply, getWeaponWeight( wep ) )
-end
-
 -- Hooks --
-hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", onWeaponSwitch )
+hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", function( ply )
+    timer.Simple( 0, function()
+        if not IsValid( ply ) then return end
+        local weight = getPlayerWeight( ply )
+        setSpeedFromWeight( ply, weight )
+    end )
+end )
