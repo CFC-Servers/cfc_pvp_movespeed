@@ -81,7 +81,7 @@ function plyMeta:SetMoveSpeed( runSpeed, walkSpeed )
 
     self.CFC_PlyMS_BaseRunSpeed = runSpeed or normalRunSpeed
     self.CFC_PlyMS_BaseWalkSpeed = walkSpeed or normalWalkSpeed
-    setSpeedFromWeight( self, weight ) -- Avoid double-calling this by not using :SRS() and :SWS()
+    setSpeedFromWeight( self, weight )
 end
 
 -- Sets run and walk speed based on a multiplier of the default speed
@@ -90,16 +90,10 @@ function plyMeta:SetMoveSpeedMultiplier( multiplier )
     self:SetMoveSpeed( normalRunSpeed * multiplier, normalWalkSpeed * multiplier )
 end
 
-
--- Hook Functions --
-local function onWeaponSwitch( ply, oldWep, newWep )
-    -- Defer recalculation so ply:GetActiveWeapon() (if used) reflects the new weapon
-    timer.Simple( 0, function()
-        if IsValid( ply ) then
-            setSpeedFromWeight( ply, getPlayerWeight( ply ) )
-        end
-    end )
-end
-
 -- Hooks --
-hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", onWeaponSwitch )
+hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", function( ply )
+    timer.Simple( 0, function()
+        if not IsValid( ply ) then return end
+        onWeaponSwitch( ply )
+    end )
+end )
