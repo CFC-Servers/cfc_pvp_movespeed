@@ -94,6 +94,7 @@ end
 hook.Add( "PlayerSwitchWeapon", "CFC_PlyMS_PlayerSwitchWeapon", function( ply )
     timer.Simple( 0, function()
         if not IsValid( ply ) then return end
-        onWeaponSwitch( ply )
+        local weight = getPlayerWeight( ply )
+        setSpeedFromWeight( ply, weight )
     end )
 end )
